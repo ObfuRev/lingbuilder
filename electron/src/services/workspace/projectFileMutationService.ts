@@ -70,15 +70,34 @@ interface ResolvedProjectRoot {
  * components (including Windows junctions) are rejected before an operation.
  */
 export class ProjectFileMutationService {
-  private readonly workspaceRoot: string;
-  private readonly pathPolicy: WorkspacePathPolicy;
+  private workspaceRoot: string;
+  private pathPolicy: WorkspacePathPolicy;
+  private realWorkspaceRootPromise?: Promise<string>;
 
   constructor(workspaceRoot: string) {
     this.workspaceRoot = path.resolve(workspaceRoot);
     this.pathPolicy = new WorkspacePathPolicy(this.workspaceRoot);
   }
 
+  /**
+   * Windows 下 os.tmpdir() 可能返回 8.3 短名（ADMINI~1），而 pathPolicy 对目标做的 fs.realpath
+   * （libuv 异步实现）会展开成长名——基准与目标不同源时 toWorkspaceRelative 产出 ../../../../
+   * 越界相对路径。两个公开入口先把根归一为真实形态（必须用异步 realpath：realpathSync 在
+   * Windows 不展开 8.3 名；workspaceSearchService 同口径）。根不存在时保持 resolve 形态。
+   */
+  private async ensureRealWorkspaceRoot(): Promise<void> {
+    this.realWorkspaceRootPromise ||= fs.realpath(this.workspaceRoot)
+      .then(value => path.resolve(value))
+      .catch(() => this.workspaceRoot);
+    const realRoot = await this.realWorkspaceRootPromise;
+    if (realRoot !== this.workspaceRoot) {
+      this.workspaceRoot = realRoot;
+      this.pathPolicy = new WorkspacePathPolicy(realRoot);
+    }
+  }
+
   async renameFile(request: RenameProjectFileRequest): Promise<RenameProjectFileResult> {
+    await this.ensureRealWorkspaceRoot();
     const roots = await this.resolveProjectRoots(request.project);
     const sourcePath = await this.resolveExistingProjectFile(request.sourcePath, roots);
     const targetPath = await this.resolveProjectWriteTarget(request.targetPath, roots);
@@ -117,6 +136,7 @@ export class ProjectFileMutationService {
   }
 
   async deleteFile(request: DeleteProjectFileRequest): Promise<DeleteProjectFileResult> {
+    await this.ensureRealWorkspaceRoot();
     const roots = await this.resolveProjectRoots(request.project);
     const filePath = await this.resolveExistingProjectFile(request.filePath, roots);
 

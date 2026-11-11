@@ -271,14 +271,15 @@ export interface AiBridgeServiceDependencies {
 }
 
 export class AiBridgeService {
-  readonly permissions: AiBridgePermissionService;
-  private readonly workspaceRoot: string;
-  private readonly pathPolicy: WorkspacePathPolicy;
-  private readonly moduleService;
-  private readonly solutionService;
-  private readonly projectCreationService: ProjectCreationService;
-  private readonly designerAssetService;
-  private readonly windowsExecutableIconService;
+  permissions: AiBridgePermissionService;
+  private workspaceRoot: string;
+  private realWorkspaceRootPromise?: Promise<string>;
+  private pathPolicy: WorkspacePathPolicy;
+  private moduleService;
+  private solutionService;
+  private projectCreationService: ProjectCreationService;
+  private designerAssetService;
+  private windowsExecutableIconService;
   private readonly managedProcessService: AiBridgeProcessManager;
   private readonly projectBuildCoordinator: ProjectBuildCoordinator;
   private readonly projectBuildSessionService: ProjectBuildSessionService;
@@ -379,7 +380,30 @@ export class AiBridgeService {
     };
   }
 
+  /**
+   * Windows 下 os.tmpdir() 可能返回 8.3 短名（ADMINI~1），而 pathPolicy/文件枚举对目标做的
+   * fs.realpath（libuv 异步实现）会展开成长名——基准与目标不同源会让相对化与目录守卫失配。
+   * 把根统一归一为真实形态（必须用异步 realpath：realpathSync 在 Windows 不展开 8.3 名；
+   * workspaceSearchService / projectFileMutationService 同口径）。根不存在时保持 resolve 形态。
+   */
+  private async ensureRealWorkspaceRoot(): Promise<void> {
+    if (!this.realWorkspaceRootPromise) {
+      this.realWorkspaceRootPromise = fs.realpath(this.workspaceRoot)
+        .then(value => path.resolve(value))
+        .catch(() => this.workspaceRoot);
+    }
+    const realRoot = await this.realWorkspaceRootPromise;
+    if (realRoot !== this.workspaceRoot) {
+      this.workspaceRoot = realRoot;
+      this.pathPolicy = new WorkspacePathPolicy(realRoot);
+      this.permissions = new AiBridgePermissionService(this.pathPolicy, this.permissions.getMode());
+    }
+  }
+
   async listWorkspaceTree(): Promise<AiBridgeTreeEntry[]> {
+    // 先把工作区根归一为真实形态（见 ensureRealWorkspaceRoot）：外部 AI 拿根路径做自查基准，
+    // 短名形态（ADMINI~1）会让它拼出的相对路径与下游 realpath 展开的目标失配。
+    await this.ensureRealWorkspaceRoot();
     // 首项是合成的 workspace 根条目：外部 AI 开始工作前先读它确认自己连到的工作区，
     // 「--workspace . 落错目录」在第一次调用就能自查出来，不必等某条 ENOENT 间接暴露。
     const realRoot = await this.pathPolicy.getRealWorkspaceRoot();
@@ -934,6 +958,8 @@ export class AiBridgeService {
   }
 
   private async assertWithinModuleArea(absolutePath: string, area: 'module-build' | 'module-packages', allowAreaRoot = false): Promise<string> {
+    // 工作区根先归一（8.3 短名实锤：realRoot 长名 vs 调用方短名绝对路径会让 relative 越界误判）。
+    await this.ensureRealWorkspaceRoot();
     const realRoot = await this.pathPolicy.getRealWorkspaceRoot();
     const areaRoot = path.join(realRoot, '.lingbuilder', area);
     const resolved = path.resolve(absolutePath);
@@ -955,12 +981,16 @@ export class AiBridgeService {
   }
 
   private async resolveModuleAreaWriteDirectory(value: string, area: 'module-build' | 'module-packages', allowAreaRoot = false): Promise<string> {
+    // 必须在 pathPolicy 消费之前完成根归一（8.3 短名实锤）：否则解析出的绝对路径仍是短名，
+    // assertWithinModuleArea 的长名 areaRoot 与之 relative 必越界。
+    await this.ensureRealWorkspaceRoot();
     const normalized = this.assertModuleAreaRelativePath(value, area);
     const resolved = await this.pathPolicy.resolveDirectoryForWrite(normalized);
     return await this.assertWithinModuleArea(resolved, area, allowAreaRoot);
   }
 
   private async resolveModuleAreaExistingPath(value: string, area: 'module-build' | 'module-packages'): Promise<string> {
+    await this.ensureRealWorkspaceRoot();
     const normalized = this.assertModuleAreaRelativePath(value, area);
     const resolved = await this.pathPolicy.resolveExisting(normalized, { rejectSymlinks: true });
     return await this.assertWithinModuleArea(resolved, area);

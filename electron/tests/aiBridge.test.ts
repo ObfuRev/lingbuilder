@@ -1457,7 +1457,8 @@ test('renderer server enforces auth and exposes safe modules, files, process, an
       })
     });
     assert.equal(rejectedProjectScopeResponse.status, 400);
-    assert.match((await rejectedProjectScopeResponse.json()).error, /项目文件不在当前项目源码或配置目录内/u);
+    // IDE 管理目录守卫先于项目范围守卫命中（.lingbuilder/** 属 IDE 专有通道），文案更具体。
+    assert.match((await rejectedProjectScopeResponse.json()).error, /项目文件不能写入 IDE 管理目录/u);
 
     const linkedProjectDirectory = path.join(workspaceRoot, 'src', 'linked-outside');
     const outsideLinkedFile = path.join(outsideRoot, 'escape.lcpp');
@@ -2229,7 +2230,8 @@ test('AI Bridge builds dll-output window projects with a zero-window designer mo
     assert.ok(mainCpp, '预览必须生成 main.cpp');
     assert.match(
       String(mainCpp.content),
-      /extern "C" __declspec\(dllexport\) int __stdcall 加法计算\(int 被加数, int 加数\)/u,
+      // 导出包装约定 __cdecl（2026-10-24 实修：x86 __stdcall 装饰导入符号与无装饰导出表对不上）。
+      /extern "C" __declspec\(dllexport\) int __cdecl 加法计算\(int 被加数, int 加数\)/u,
       '零窗口 DLL 项目必须从公开子程序生成导出包装'
     );
     assert.match(String(mainCpp.content), /LINGBUILDER_PURE_LOGIC_DLL/u, '无窗口命令的 DLL 项目应走纯逻辑精简形态');
@@ -2280,7 +2282,7 @@ test('AI Bridge builds windows-dll template projects without a designer model on
     assert.ok(mainCpp, '预览必须生成 main.cpp');
     assert.match(
       String(mainCpp.content),
-      /extern "C" int __stdcall add\(\)/u,
+      /extern "C" int __cdecl add\(\)/u,
       '零窗口 DLL 项目必须仍从公开子程序生成导出包装'
     );
     assert.match(String(mainCpp.content), /BOOL WINAPI DllMain/u, '动态库输出必须生成 DllMain');
@@ -2404,7 +2406,8 @@ test('AI Bridge workspace.list 首项返回工作区根绝对路径（外部 AI 
     const root = tree[0];
     assert.equal(root.type, 'workspace', '首项必须是合成的 workspace 根条目');
     assert.equal(root.path, '.');
-    assert.equal(path.resolve(String(root.workspaceRoot)).toLowerCase(), path.resolve(workspaceRoot).toLowerCase());
+    // 服务端把根归一为真实形态（fs.realpath 展开 8.3 短名），期望值对同一工作区取 realpath 对拍。
+    assert.equal(path.resolve(String(root.workspaceRoot)).toLowerCase(), path.resolve(await fs.realpath(workspaceRoot)).toLowerCase());
     assert.equal(root.ideVersion, resolveIdeVersion(), '根条目必须携带 IDE 版本');
     assert.equal(tree.slice(1).some(entry => entry.type === 'workspace'), false, '合成根条目只允许出现一次');
     assert.ok(tree.some(entry => entry.type === 'file' && entry.name === 'README.md'), '根条目之后仍是常规文件树');

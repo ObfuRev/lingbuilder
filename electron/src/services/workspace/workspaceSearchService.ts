@@ -132,9 +132,9 @@ interface CandidateCollection {
  * in normal operation.
  */
 export class WorkspaceSearchService {
-  private readonly workspaceRoot: string;
-  private readonly pathPolicy: WorkspacePathPolicy;
-  private readonly solutionService: SolutionService;
+  private workspaceRoot: string;
+  private pathPolicy: WorkspacePathPolicy;
+  private solutionService: SolutionService;
   private readonly operations: WorkspaceSearchFileOperations;
   private readonly maxFileBytes: number;
   private readonly maxRetainedBytes: number;
@@ -154,6 +154,25 @@ export class WorkspaceSearchService {
   private readonly previews = new Map<string, PreviewCacheRecord>();
   private readonly transactions = new Map<string, TransactionCacheRecord>();
   private mutationTail: Promise<void> = Promise.resolve();
+  private realWorkspaceRootPromise?: Promise<string>;
+
+  /**
+   * Windows 下 os.tmpdir() 可能返回 8.3 短名（ADMINI~1），而 resolveExisting/collectTreeFiles 对目标做的
+   * fs.realpath（libuv 异步实现）会展开成长名；相对化基准若是短名，path.relative 会产出 ../../../../
+   * 越界相对路径。所有公开入口先把 this.workspaceRoot 归一为真实形态（幂等；注意必须用异步 realpath——
+   * realpathSync 在 Windows 上不展开 8.3 名，两者行为不一致）。根不存在时保持 resolve 形态。
+   */
+  private async ensureRealWorkspaceRoot(): Promise<void> {
+    this.realWorkspaceRootPromise ||= fs.realpath(this.workspaceRoot)
+      .then(value => path.resolve(value))
+      .catch(() => this.workspaceRoot);
+    const realRoot = await this.realWorkspaceRootPromise;
+    if (realRoot !== this.workspaceRoot) {
+      this.workspaceRoot = realRoot;
+      this.pathPolicy = new WorkspacePathPolicy(realRoot);
+      this.solutionService = createSolutionService(realRoot);
+    }
+  }
 
   constructor(workspaceRoot: string, options: WorkspaceSearchServiceOptions = {}) {
     this.workspaceRoot = path.resolve(workspaceRoot);
@@ -187,6 +206,7 @@ export class WorkspaceSearchService {
   }
 
   async query(request: WorkspaceSearchQueryRequest): Promise<WorkspaceSearchQueryResponse> {
+    await this.ensureRealWorkspaceRoot();
     const normalizedRequest = this.validateQueryRequest(request);
     const matcher = createMatcher(normalizedRequest.query, normalizedRequest.isRegex, normalizedRequest.matchCase);
     const diagnostics: WorkspaceSearchDiagnostic[] = [];
@@ -286,6 +306,7 @@ export class WorkspaceSearchService {
   }
 
   async preview(request: WorkspaceReplacePreviewRequest): Promise<WorkspaceReplacePreviewResponse> {
+    await this.ensureRealWorkspaceRoot();
     if (!request || typeof request.queryId !== 'string' || !request.queryId.trim()) {
       throw new WorkspaceSearchError('INVALID_REQUEST', '替换预览缺少有效的 queryId。');
     }
@@ -367,6 +388,7 @@ export class WorkspaceSearchService {
   }
 
   async apply(request: WorkspaceReplaceApplyRequest): Promise<WorkspaceReplaceApplyResponse> {
+    await this.ensureRealWorkspaceRoot();
     return await this.serializeMutation(async () => {
       if (!request || typeof request.previewId !== 'string' || !request.previewId.trim()) {
         throw new WorkspaceSearchError('INVALID_REQUEST', '应用替换缺少有效的 previewId。');
@@ -426,6 +448,7 @@ export class WorkspaceSearchService {
   }
 
   async rollback(request: WorkspaceReplaceRollbackRequest): Promise<WorkspaceReplaceRollbackResponse> {
+    await this.ensureRealWorkspaceRoot();
     return await this.serializeMutation(async () => {
       if (!request || typeof request.transactionId !== 'string' || !request.transactionId.trim()) {
         throw new WorkspaceSearchError('INVALID_REQUEST', '回滚替换缺少有效的 transactionId。');

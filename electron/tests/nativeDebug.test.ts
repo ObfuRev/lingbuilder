@@ -54,7 +54,8 @@ test('advanced debug supports attach, dump, remote, registers, memory and disass
     else if (mode === 'dump') await service.openDump({ program, coreFile: dump });
     else await service.connectRemote({ program, host: 'localhost', port: 1234 });
     const attach = connection.requests.find(item => item.command === 'attach')?.args;
-    if (mode === 'attach') assert.equal(attach.pid, 123); if (mode === 'dump') assert.equal(attach.coreFile, dump);
+    // resolveFile 会经 fs.realpath 规范化路径；本机 os.tmpdir() 可能返回 8.3 短名（ADMINI~1），期望值须按同一文件取真实路径再比较。
+    if (mode === 'attach') assert.equal(attach.pid, 123); if (mode === 'dump') assert.equal(attach.coreFile, await fs.realpath(dump));
     if (mode === 'remote') assert.deepEqual([attach['gdb-remote-host'], attach['gdb-remote-port']], ['localhost', 1234]);
     connection.emit('event', { type: 'event', event: 'stopped', body: { reason: 'pause', threadId: 7 } });
     assert.equal((await service.registers(70))[0].name, 'rax'); assert.deepEqual((await service.readMemory('0x1000', 0, 3)).bytes, [0x48, 0x89, 0xe5]);

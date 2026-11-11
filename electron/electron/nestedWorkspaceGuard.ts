@@ -13,7 +13,15 @@ const EMPTY_PLAN: NestedWorkspaceArtifactPlan = {
 
 // Electron 主进程使用独立 tsconfig/rootDir，因此在主进程边界保留同等的路径守卫。
 export async function detectNestedWorkspaceArtifacts(sourceRoot: string): Promise<NestedWorkspaceArtifactPlan> {
-  const resolvedRoot = path.resolve(sourceRoot);
+  // 排除清单必须与 copyAbsoluteTree 的 realSource（fs.realpath 展开）同形态：Windows 下
+  // os.tmpdir() 可能是 8.3 短名（ADMINI~1），path.resolve 不展开而 fs.realpath 展开——
+  // 两侧不同源时 isNestedWorkspaceArtifactPath 永不命中，嵌套工作区文件会漏进源码包。
+  let resolvedRoot = path.resolve(sourceRoot);
+  try {
+    resolvedRoot = path.resolve(await fs.realpath(resolvedRoot));
+  } catch {
+    // 根不存在时按 resolve 形态继续（后面 stat 同样失败 → EMPTY_PLAN）。
+  }
   try {
     const marker = await fs.stat(path.join(resolvedRoot, '.lingbuilder', 'solution.json'));
     if (!marker.isFile()) return EMPTY_PLAN;

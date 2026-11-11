@@ -441,9 +441,9 @@ test('build properties dialog shows the type box and editable configuration for 
   assert.match(markup, /role="dialog"/u);
   assert.match(markup, /data-role="project-kind"/u);
   assert.match(markup, /动态链接库（DLL）/u);
-  assert.match(markup, /aria-label="构建模式"/u);
-  assert.match(markup, /aria-label="构建架构"/u);
-  assert.match(markup, /aria-label="附加参数"/u);
+  // DLL 项目构建配置改为「由工作区构建配置统一决定」的说明（模式/架构选择器只在非 DLL 可编辑项目显示）。
+  assert.match(markup, /构建模式与架构由工作区构建配置统一决定/u);
+  assert.doesNotMatch(markup, /aria-label="构建模式"/u);
   assert.match(markup, /保存/u);
 });
 
