@@ -4484,6 +4484,8 @@ ${cdpClientIntegration}
 
 ${webSocketServerIntegration}
 
+${httpServerIntegration}
+
 ${newEmojiWindowMembers}
 
 ${newEmojiMenuResourceRuntime}
@@ -18256,7 +18258,7 @@ ${generateFbroVipIndividualRuntime(false)}
         const wchar_t* eventName = CEF3_归一化Bridge事件名(packet.event_name ? packet.event_name : L"");
         const wchar_t* fieldsJson = packet.fields_json ? packet.fields_json : L"{}";
         if (TextEquals(eventName, L"加载状态改变")) instance.isLoading = std::wcsstr(fieldsJson, L"\\"loading\\":true") != nullptr;
-        // 桥接层把 CefBrowserHost::CreateBrowser 投递到 CEF UI 线程执行，LB_CEF3_BrowserCreate 立刻返回句柄，
+        // 桥接层把原生浏览器创建投递到 CEF UI 线程执行，LB_CEF3_BrowserCreate 立刻返回句柄，
         // 但此刻 state->browser 仍为空，LB_CEF3_BrowserLoadUrl 会以「CEF3浏览器尚未创建完成」失败。
         // 桥接层在发出本事件前已写入 state_->browser，所以这里是补发排队导航的最早安全时机；
         // 事件没赶上（登记晚于事件）时由 CEF3_浏览器对象已就绪 在使用点兜底补发。
