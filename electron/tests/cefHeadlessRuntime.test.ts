@@ -59,10 +59,11 @@ test('headless designer resource generates a spec table with owner-window auto-c
   withResource.resources = [headlessResource()];
   const generated = generateLingCppNativeWin32Project(withResource, {
     lingCppSourceCode: SOURCE, outputKind: 'console-application',
-    // CEF3 无头运行时按模块族裁剪：断言实现语义时启用 cef3.browser（单文件形态）。
+    // 启用 cef3.platform 走拆分形态：cef3.browser 会进入 Bridge-only 单文件变换，该形态下
+    // LINGBUILDER_CEF3_AVAILABLE 恒为 0，无头资源的 legacy 成员与调用被合法裁剪（Bridge 无头链未迁移）。
     enabledModules: [{
-      manifest: BUILTIN_MODULES.find(item => item.id === 'lingbuilder.cef3.browser')!,
-      installPath: 'builtin://lingbuilder.cef3.browser',
+      manifest: BUILTIN_MODULES.find(item => item.id === 'lingbuilder.cef3.platform')!,
+      installPath: 'builtin://lingbuilder.cef3.platform',
       isBuiltin: true,
       isInstalled: true,
       isEnabledForProject: true,
@@ -70,7 +71,8 @@ test('headless designer resource generates a spec table with owner-window auto-c
     }]
   });
   assert.deepEqual(generated.blockingDiagnostics, []);
-  const code = generated.files.find(file => file.relativePath === 'main.cpp')?.content || '';
+  // 拆分形态：spec 表与成员定义在 runtime.h、入口调用在 main.cpp，对拍面覆盖两个文件。
+  const code = generated.files.reduce((acc, file) => file.relativePath === 'lingbuilder_runtime.h' || file.relativePath === 'main.cpp' ? acc + file.content + '" + bs + "n' : acc, '');
   assert.match(code, /struct CefHeadlessSpec \{/);
   assert.match(code, /static CefHeadlessSpec g_cefHeadlessBrowsers\[\] = \{/);
   assert.match(code, /\{ L"cefheadless-main", L"CEF3无头浏览器1", 0, 3, L"https:\/\/example\.com", L"\.cef3\/headless-a", L"", 1024, 640, true \}/);

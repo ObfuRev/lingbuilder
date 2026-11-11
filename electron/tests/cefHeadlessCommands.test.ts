@@ -338,7 +338,8 @@ test('queued navigation is flushed from one place and does not depend on the eve
   assert.doesNotMatch(create, /bridgeReady = true/, '无头创建不得预置 bridgeReady');
   assert.match(create, /instance->created = true;/);
   for (const signature of [
-    'int CEF3_创建弹窗浏览器(int instanceId, const wchar_t* address, const wchar_t* cacheDirectory, const wchar_t* proxyServer)',
+    // 1029 弹窗边界批次为创建签名追加 4 个可选位置尾参（-1 = 不定界）。
+    'int CEF3_创建弹窗浏览器(int instanceId, const wchar_t* address, const wchar_t* cacheDirectory, const wchar_t* proxyServer, int left = -1, int top = -1, int width = -1, int height = -1)',
     'int CEF3_创建区域(int instanceId, int left, int top, int width, int height, const wchar_t* address, const wchar_t* cacheDirectory, const wchar_t* proxyServer)'
   ]) {
     assert.doesNotMatch(memberBody(code, signature), /bridgeReady = true/, `${signature.split('(')[0]} 不得预置 bridgeReady`);
@@ -581,7 +582,8 @@ test('cef3 osr commands have real runtime implementations that call the bridge e
     outputKind: 'console-application',
     enabledModules: [cef3PlatformModule]
   });
-  const bridgeOptional = unguarded.files.find(file => file.relativePath === 'main.cpp')?.content || '';
+  // OSR 命令运行时在 runtime.h（控制台工程同样），对拍面覆盖两个文件。
+  const bridgeOptional = unguarded.files.reduce((acc, file) => file.relativePath === 'lingbuilder_runtime.h' || file.relativePath === 'main.cpp' ? acc + file.content + '\n' : acc, '');
   for (const shape of Object.values(OSR_COMMANDS)) {
     const start = bridgeOptional.indexOf(shape.runtime);
     assert.ok(start >= 0, `未启用浏览器宏收敛的生成结果缺少 ${shape.runtime}`);

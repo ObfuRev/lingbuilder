@@ -216,6 +216,8 @@ export const CEF3_EVENT_BRIDGE_SUBSCRIPTIONS: Readonly<Record<string, string>> =
  * 网站权限默认为 3（自定义），写死 1 会改掉这些事件的语义。
  */
 export const CEF3_EVENT_ASYNC_DEFAULTS: Readonly<Record<string, number>> = {
+  // 查询请求（cefQuery）桥接 default_action=0：挂起等待宿主应答（120s 超时对页面回 -4），不得默认续跑。
+  查询请求: 0,
   资源加载前: 1,
   下载开始: 1,
   客户端证书选择: 2,
