@@ -328,8 +328,11 @@ test('new_emoji FBro browser shell template previews x64 frame, controls, handle
   assert.doesNotMatch(source, /https?:\/\/(?:127\.0\.0\.1|localhost)/iu);
   assert.match(source, /浏览器外壳_取标签页数量\(\)/u);
   assert.match(source, /局部 整数型 标签控件宽度 = 0/u);
-  assert.match(source, /标签区宽度 = 窗口宽度 - 300/u);
-  assert.match(source, /标签控件宽度 = 标签数量 \* 标签宽度/u);
+  // chrome 模式标签宽按内容自适应并按 DPI 折算：宽度从 DLL 读回值（NE标签页_取项矩形2）推导，不再反推固定 300 侧栏。
+  assert.match(source, /内容宽 = NE标签页_取标签条内容宽\(浏览器标签页\)/u);
+  assert.match(source, /读回 = NE标签页_取项矩形2\(浏览器标签页, 标签数量 - 1, 末签横, 末签纵, 末签宽, 末签高\)/u);
+  assert.match(source, /标签控件宽度 = 内容宽 \+ 12/u);
+  assert.match(source, /标签栏右边 = 16 \+ 末签横 \+ 末签宽/u);
   assert.match(source, /控件_设置位置大小\(浏览器标签页, 16, 4, 标签控件宽度, 34\)/u);
   assert.match(source, /控件_设置位置大小\(新建标签按钮, 新建标签横坐标, 5, 30, 30\)/u);
   assert.match(source, /事件 _网页菜单_命令\(整数型 项目索引，文本型 菜单路径，文本型 命令\)/u);

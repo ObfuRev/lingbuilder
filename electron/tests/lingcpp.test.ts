@@ -4291,7 +4291,8 @@ test('beginner editor exposes method-scoped local declarations with variable and
   assert.match(source, /为 .* 选择类型/u);
   assert.match(source, /handleBeginnerCodeClick/u);
   assert.match(source, /转到定义：/u);
-  assert.match(source, /&处理器名可转到定义/u);
+  assert.match(source, /beginnerContextMenu\.definitionName/u);
+  assert.match(source, /转到定义：\$\{beginnerContextMenu\.definitionName\}/u);
   assert.match(source, /getBeginnerTextareaOffsetAtPoint\(event\.currentTarget, event\.clientX, event\.clientY\)/u);
   assert.match(source, /style=\{\{ height: `\$\{lineHeight\}px`, lineHeight: `\$\{lineHeight\}px` \}\}/u);
   assert.match(source, /flowGuideColumn instanceof HTMLElement\) flowGuideColumn\.scrollTop = 0/u);
@@ -4306,15 +4307,13 @@ test('beginner editor exposes method-scoped local declarations with variable and
 test('beginner editor keeps a parameter entry row for zero-parameter subroutines', () => {
   const source = readFileSync(resolve(process.cwd(), 'src', 'components', 'DiffViewer.tsx'), 'utf8');
   assert.match(source, /const renderParameterCanvas = \(target: BeginnerCodeTarget, visualLine: number\)/u);
-  assert.match(source, /填写名称和类型后新增/u);
-  assert.match(source, /新增参数并写回子程序签名/u);
+  assert.match(source, /insertCodeTargetParameter\(target\)/u);
+  assert.match(source, /在参数表末尾插入新参数；在参数行按 Enter 可在当前行下方插入/u);
   assert.match(source, /\{ label: '操 作', width: 104 \}/u);
-  assert.match(source, /gap-1 whitespace-nowrap rounded border px-1 text-\[10px\]/u);
+  assert.match(source, /gap-1 whitespace-nowrap rounded border px-1\.5 text-\[10px\]/u);
   assert.match(source, /target\.method\.parameters\.length \+ 1/u);
   assert.match(source, /data-beginner-parameter-type/u);
-  assert.match(source, /data-beginner-new-parameter-type/u);
   assert.match(source, /renderParameterArraySwitch/u);
-  assert.match(source, /renderNewParameterArraySwitch/u);
   assert.match(source, /setLingCppArrayParameterType/u);
   assert.match(source, /updateBeginnerTypeCompletion\(inputKey, event\.currentTarget\)/u);
   assert.match(source, /renderBeginnerTypeCompletionPopup\(inputKey, applyTypeCompletion\)/u);
@@ -4370,8 +4369,9 @@ test('beginner editor tables support dragging and resetting column widths', () =
 
 test('generateLingCppNativeWin32Project keeps message-box result when assigned to a variable', () => {
   const source = [
-    '类 MainWindow : 公开 窗体',
-    '    事件 _MainWindow_关闭前()',
+    // 窗口事件按 className 接线：sampleProject 的窗口类名是「游戏主窗体」，源码类名必须与之对齐。
+    '类 游戏主窗体 : 公开 窗体',
+    '    事件 _游戏主窗体_关闭前()',
     '        局部 整数型 选择',
     '        选择 = 信息框("还没保存的改动会丢失，确定退出吗？", 52, "退出确认")',
     '        如果 (选择 = 6)',
@@ -6426,9 +6426,10 @@ test('LingCpp dynamic-library output exports 公开 methods via DllMain entry an
   assert.ok(!cpp.includes('int WINAPI wWinMain'), '动态库模式不应生成 wWinMain 入口');
   assert.match(cpp, /BOOL WINAPI DllMain\(HINSTANCE instance, DWORD reason, LPVOID reserved\)/u);
   assert.match(cpp, /LingBuilder_EnsureRuntimeInitialized\(\)/u);
-  assert.match(cpp, /extern "C" __declspec\(dllexport\) int __stdcall 加法计算\(int 被加数, int 加数\)/u);
+  // 导出包装约定 __cdecl（2026-10-24 实修）：__stdcall 在 x86 产生 @N 装饰导入符号，与无装饰导出表对不上。
+  assert.match(cpp, /extern "C" __declspec\(dllexport\) int __cdecl 加法计算\(int 被加数, int 加数\)/u);
   // 文本参数必须以 const& 跨界、文本返回经 thread_local 缓冲以 const wchar_t* 交出（按值跨界会跨 CRT 堆损坏）。
-  assert.match(cpp, /extern "C" __declspec\(dllexport\) const wchar_t\* __stdcall 问候生成\(const wchar_t\* 姓名\)/u);
+  assert.match(cpp, /extern "C" __declspec\(dllexport\) const wchar_t\* __cdecl 问候生成\(const wchar_t\* 姓名\)/u);
   // 全部导出名都是非 ASCII：不生成 exports.def，包装保留 dllexport 装饰名兜底（x86 _名@参数字节数）。
   assert.ok(!generated.files.some(file => file.relativePath === 'exports.def'), '无 ASCII 导出名时不应生成空导出表');
   assert.match(cpp, /LingBuilder_Dll文本返回缓冲 = LingBuilder_应用单例_游戏主窗体\(\)\.问候生成\(姓名\);/u);
@@ -6436,7 +6437,7 @@ test('LingCpp dynamic-library output exports 公开 methods via DllMain entry an
   assert.ok(!cpp.includes('dllexport) 整数型 内部翻倍'), '私有子程序不应出现在导出包装中');
 });
 
-test('LingCpp dynamic-library output emits exports.def with undecorated stdcall aliases for ASCII names', () => {
+test('LingCpp dynamic-library output emits exports.def with undecorated cdecl names for ASCII names', () => {
   const source = [
     '类 游戏主窗体 : 窗口',
     '公开',
@@ -6454,10 +6455,10 @@ test('LingCpp dynamic-library output emits exports.def with undecorated stdcall 
   assert.equal(generated.blockingDiagnostics.length, 0, generated.blockingDiagnostics.join('\n'));
   const cpp = generated.files.reduce((acc, file) => file.relativePath === 'main.cpp' ? acc + file.content : acc, '');
   // ASCII 导出名：包装不带 dllexport，仅由 exports.def 无装饰导出（避免 x64 双导出告警）。
-  assert.match(cpp, /extern "C" int __stdcall add_numbers\(int 被加数, int 加数\)/u);
-  assert.ok(!cpp.includes('dllexport) int __stdcall add_numbers'), 'ASCII 导出名不应再走 dllexport 自动导出');
+  assert.match(cpp, /extern "C" int __cdecl add_numbers\(int 被加数, int 加数\)/u);
+  assert.ok(!cpp.includes('dllexport) int __cdecl add_numbers'), 'ASCII 导出名不应再走 dllexport 自动导出');
   // 非 ASCII 导出名：dllexport 装饰名兜底 + 中文诊断提示。
-  assert.match(cpp, /extern "C" __declspec\(dllexport\) int __stdcall 加法计算/u);
+  assert.match(cpp, /extern "C" __declspec\(dllexport\) int __cdecl 加法计算/u);
   assert.ok(generated.diagnostics.some(message => message.includes('导出名不是 ASCII 标识符')), generated.diagnostics.join('\n'));
   const definition = generated.files.find(file => file.relativePath === 'exports.def');
   assert.ok(definition, '存在 ASCII 导出名时必须生成 exports.def');

@@ -550,7 +550,8 @@ test('workspace DataGrid demo covers every API and event and generates native C+
     .map(manifest => ({ manifest, installPath: `builtin://${manifest.id}`, isBuiltin: true, isInstalled: true, isEnabledForProject: true, diagnostics: [] }));
   const generated = generateLingCppNativeWin32Project(project, { enabledModules, lingCppSourceCode: source });
   assert.deepEqual(generated.blockingDiagnostics, []);
-  const cpp = generated.files.find(file => file.relativePath === 'lingbuilder_runtime.h')!.content;
+  // 事件处理器的翻译产物在 main.cpp（接口函数定义在 runtime.h），对拍面必须覆盖两个文件。
+  const cpp = generated.files.reduce((acc, file) => file.relativePath === 'lingbuilder_runtime.h' || file.relativePath === 'main.cpp' ? acc + file.content + '\n' : acc, '');
   DATA_GRID_API.forEach(item => assert.ok(cpp.includes(`${item.name}(`), `示例生成结果缺少 ${item.name}`));
   assert.match(cpp, /LingCppWideArg\(虚拟行键\)/u);
   assert.match(cpp, /1000000/u);
@@ -559,7 +560,8 @@ test('workspace DataGrid demo covers every API and event and generates native C+
   const tabs = controls.find(control => control.type === 'TabControl' && control.name === '接口分类选项卡');
   assert.equal(Array.isArray(tabs?.properties?.tabs) ? tabs.properties.tabs.length : 0, 9);
   const apiButtons = controls.filter(control => control.type === 'Button' && control.id.startsWith('api-button-'));
-  assert.equal(apiButtons.length, 86);
+  // 按钮 = DATA_GRID_API 总数 − 事件专用命令数（eventOnlyCommands，当前 7 条）；API 目录增删时同步本快照。
+  assert.equal(apiButtons.length, DATA_GRID_API.length - 7);
   assert.doesNotMatch(source, /运行全部/u);
   for (const button of apiButtons) {
     const handler = button.events?.Click;

@@ -124,7 +124,8 @@ test('designer reports model-only edits as dirty without treating selection as a
 test('designer uses menu-aware content coordinates and keeps source identity read-only', async () => {
   const source = await fs.readFile(path.resolve(import.meta.dirname, '../src/components/WpfDesigner.tsx'), 'utf8');
   assert.match(source, /getDesignerWindowContentOffset\(activeWindow\)/u);
-  assert.match(source, /top: `\$\{control\.y \+ contentOffset\}px`/u);
+  // 布局系统引入 displayRect（锚定/等比/面板布局预览矩形）：无布局矩形时回落 control.y，菜单栏内容偏移始终叠加。
+  assert.match(source, /top: `\$\{\(displayRect \? displayRect\.y : control\.y\) \+ contentOffset\}px`/u);
   assert.match(source, /hasDesignerWindowMenu\(activeWindow\)/u);
   assert.match(source, /<ReadOnlyTextField label="类名"/u);
   assert.match(source, /<ReadOnlyTextField label="文件名"/u);
@@ -139,8 +140,8 @@ test('beginner editor navigation and variable form remain safe without a duplica
   assert.match(source, /input\.setSelectionRange\(caret, caret\)/u);
   assert.doesNotMatch(source, /input\.setSelectionRange\(start, end\)/u);
   assert.doesNotMatch(source, /onBlur=\{event => commitNewMemberDraft/u);
-  assert.match(source, /onClick=\{commitNewMemberDraft\}/u);
-  assert.match(source, /aria-label="取消新增变量"/u);
+  // 变量新增已重构为「表尾直接追加自动编号行」（appendBeginnerMemberRow），不再有草稿提交/取消表单。
+  assert.match(source, /onClick=\{\(\) => \{ appendBeginnerMemberRow\(\); \}\}/u);
   assert.match(source, /onClick=\{\(\) => \{ void deleteStructuredRow\(row\); \}\}/u);
   assert.doesNotMatch(source, /新手工作台/u);
   assert.doesNotMatch(source, /renderBeginnerSummaryStrip/u);
@@ -162,7 +163,10 @@ test('beginner editor navigation and variable form remain safe without a duplica
   assert.match(source, /const BEGINNER_CODE_OVERLAY_TOKEN_STYLE: React\.CSSProperties/u);
   assert.match(source, /fontWeight: 'inherit'/u);
   assert.match(source, /\.\.\.BEGINNER_CODE_OVERLAY_TOKEN_STYLE/u);
-  assert.match(source, /kind === 'control-reference'[\s\S]*?getLingCppControlReferenceTokenColor\(isDarkMode\)/u);
+  // 令牌颜色体系重构后统一走 lingCppTokenPalette（resolveLingCppTokenColors + 角色映射），
+  // control-reference 的专属强调是 textShadow（不改变字形度量，保光标对齐）。
+  assert.match(source, /lingCppTokenPalette\[getLingCppTokenColorRoleForKind\(kind\)\]/u);
+  assert.match(source, /kind === 'control-reference' \? \{ textShadow: '0 0 0\.7px currentColor' \} : \{\}/u);
   assert.doesNotMatch(source, /'module-command':[^\n]*font-bold/u);
 });
 
@@ -349,7 +353,8 @@ test('designer renders TabControl with a Win32-style tab strip and page surface'
   assert.match(designerSource, /style=\{\{ right: 'calc\(60% \+ 4px\)' \}\}/u);
   assert.match(previewSource, /data-tab-control-preview=\{newEmojiTabs \? 'new-emoji' : 'win32'\}/u);
   assert.match(previewSource, /data-tab-header-align=\{newEmojiTabs \? headerAlign : undefined\}/u);
-  assert.match(previewSource, /justifyContent: headerTextJustifyContent/u);
+  // chrome 模式标题栏接管对齐（new_emoji 标题栏重构），Win32 条带用 stripJustify。
+  assert.match(previewSource, /justifyContent: !chromeMode \? stripJustify : undefined/u);
   assert.match(previewSource, /Math\.max\(72, Math\.min\(152, control\.width \/ tabs\.length\)\)/u);
   assert.match(previewSource, /role="tablist"/u);
   assert.match(previewSource, /role="tabpanel"/u);

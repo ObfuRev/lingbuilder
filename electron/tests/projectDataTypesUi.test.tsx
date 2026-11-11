@@ -18,9 +18,10 @@ test('新手项目数据类型编辑器提供类型卡片、字段表格、空�
     .filter(item => item.label !== '空')
     .map(item => item.label);
   assert.deepEqual(typeLabels, ['文本型', '整数型', '长整数型', '逻辑型', '小数型', '单精度小数型', '双精度小数型', '字节型', '字节集', '用户信息']);
-  assert.equal((markup.match(/role="combobox"/gu) || []).length, 3);
+  // 新字段行重构为「添加字段」按钮（无内联类型选择器），combobox 只剩既有字段行。
+  assert.equal((markup.match(/role="combobox"/gu) || []).length, 2);
   assert.match(markup, /aria-label="用户信息\.姓名 字段类型"/u);
-  assert.match(markup, /aria-label="用户信息 新字段类型"/u);
+  assert.match(markup, /添加字段/u);
   assert.doesNotMatch(markup, /<select/u);
   assert.doesNotMatch(markup, /<datalist/u);
   assert.match(markup, /overflow-x-auto/u);

@@ -14,7 +14,7 @@ test('workbench exposes native debug start, continue, step and stop controls wit
 test('F5 switches from build output to runtime debug logs only after a successful launch', async () => {
   const source = await fs.readFile(path.resolve(import.meta.dirname, '../src/App.tsx'), 'utf8');
   assert.match(source, /detail\.status === 'started'[\s\S]*setActiveTabInBottom\('output'\)/u);
-  assert.match(source, /detail\.status === 'completed' && detail\.ok === true[\s\S]*setShowBottomPanel\(true\)[\s\S]*setActiveTabInBottom\('debug_logs'\)/u);
+  assert.match(source, /detail\.status === 'completed' && detail\.ok === true[\s\S]*commitPanelVisible\(true\)[\s\S]*setActiveTabInBottom\('debug_logs'\)/u);
 });
 
 test('Monaco uses the glyph margin for ordinary and Shift conditional breakpoint gestures', async () => {

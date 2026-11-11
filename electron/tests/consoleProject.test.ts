@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { generateLingCppNativeWin32Project } from '../src/services/windowDesigner/lingCppWin32Project';
+import { BUILTIN_MODULES } from '../src/services/modules/builtinModules';
 import { createVisualStudioProjectExportContent } from '../src/services/windowDesigner/visualStudioProjectExporter';
 import type { LingWindowProject } from '../src/services/windowDesigner/types';
 
@@ -42,10 +43,17 @@ function createConsoleDesignerProject(className = '程序'): LingWindowProject {
 test('console entry guards the CEF subprocess before running the program body', () => {
   const generated = generateLingCppNativeWin32Project(createConsoleDesignerProject(), {
     lingCppSourceCode: CONSOLE_SOURCE,
-    outputKind: 'console-application'
+    outputKind: 'console-application',
+    // 退出回收成员定义在 cef3 族门控段（runtime.h），必须启用 cef3.platform 才会拼入。
+    enabledModules: [{
+      manifest: BUILTIN_MODULES.find(item => item.id === 'lingbuilder.cef3.platform')!,
+      installPath: 'builtin://lingbuilder.cef3.platform',
+      isBuiltin: true, isInstalled: true, isEnabledForProject: true, diagnostics: []
+    }]
   });
   assert.deepEqual(generated.blockingDiagnostics, []);
-  const mainCpp = generated.files.find(file => file.relativePath === 'main.cpp')?.content || '';
+  // 拆分形态：入口在 main.cpp、退出回收成员定义在 runtime.h，对拍面覆盖两个文件。
+  const mainCpp = generated.files.reduce((acc, file) => file.relativePath === 'lingbuilder_runtime.h' || file.relativePath === 'main.cpp' ? acc + file.content + '\n' : acc, '');
 
   // 守卫必须早于程序体，且先于运行时初始化（子进程只需返回退出码）。
   // 这里必须锁「调用」而不是函数定义：定义总出现在文件更前面，只锁定义的话把调用

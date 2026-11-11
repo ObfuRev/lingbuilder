@@ -235,7 +235,8 @@ test('旧内嵌文件与窗口图标解耦：图标选「不显示」也照常�
     lingCppSourceCode: '类 MainWindow\n结束类\n',
     enabledModules: [module]
   });
-  const cpp = generated.files.find(file => file.relativePath === 'lingbuilder_runtime.h')!.content;
+  // rc 表在 runtime.h、wWinMain 启动释放在 main.cpp，对拍面必须覆盖两个文件。
+  const cpp = generated.files.reduce((acc, file) => file.relativePath === 'lingbuilder_runtime.h' || file.relativePath === 'main.cpp' ? acc + file.content + '\n' : acc, '');
   assert.match(cpp, /2301u, true, L"bundle\.zip"/u, '迁移后的资源必须以 2301 起打进 rc 表');
   assert.match(cpp, /LB_EmbeddedResourceReleaseExtracted\(\);/, 'wWinMain 必须调用启动释放');
   assert.doesNotMatch(cpp, /LingBuilder_释放内嵌资源文件/u, '旧释放函数已随迁移下线');
