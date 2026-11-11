@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "enabledModuleIds": [
+    "lingbuilder.win32.basic",
+    "lingbuilder.net.tcp",
+    "lingbuilder.net.udp"
+  ],
+  "pinnedVersions": {
+    "lingbuilder.win32.basic": "1.1.0",
+    "lingbuilder.net.tcp": "1.0.0",
+    "lingbuilder.net.udp": "1.0.0"
+  }
+}

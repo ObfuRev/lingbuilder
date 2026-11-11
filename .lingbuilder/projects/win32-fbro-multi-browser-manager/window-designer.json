@@ -1,0 +1,600 @@
+{
+  "schemaVersion": 2,
+  "id": "win32-fbro-multi-browser-manager",
+  "name": "FBro 多浏览器管理器",
+  "resources": [],
+  "startupWindowId": "main",
+  "windows": [
+    {
+      "id": "main",
+      "fileName": "MainWindow.xml",
+      "className": "MainWindow",
+      "title": "FBro 多浏览器管理器",
+      "width": 1280,
+      "height": 620,
+      "background": "#0F172A",
+      "description": "FBro 多实例浏览器管理器演示。",
+      "controls": [
+        {
+          "id": "browser-page",
+          "type": "FBroBrowser",
+          "name": "浏览器页面",
+          "content": "",
+          "x": 278,
+          "y": 54,
+          "width": 640,
+          "height": 460,
+          "background": "#0F172A",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "processMode": "in-process"
+          }
+        },
+        {
+          "id": "instance-list",
+          "type": "ListBox",
+          "name": "浏览器实例列表",
+          "content": "",
+          "x": 12,
+          "y": 50,
+          "width": 244,
+          "height": 300,
+          "background": "#0F172A",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "items": []
+          }
+        },
+        {
+          "id": "address-input",
+          "type": "TextBox",
+          "name": "地址输入",
+          "content": "",
+          "x": 278,
+          "y": 14,
+          "width": 480,
+          "height": 30,
+          "background": "#0F172A",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {}
+        },
+        {
+          "id": "name-label",
+          "type": "Label",
+          "name": "名称标签",
+          "content": "实例名称：",
+          "x": 12,
+          "y": 358,
+          "width": 90,
+          "height": 24,
+          "background": "transparent",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false
+        },
+        {
+          "id": "instance-name-input",
+          "type": "TextBox",
+          "name": "实例名称输入",
+          "content": "",
+          "x": 106,
+          "y": 354,
+          "width": 150,
+          "height": 30,
+          "background": "#0F172A",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {}
+        },
+        {
+          "id": "instance-detail",
+          "type": "TextBox",
+          "name": "实例详情",
+          "content": "",
+          "x": 12,
+          "y": 392,
+          "width": 244,
+          "height": 120,
+          "background": "#0F172A",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "readOnly": true,
+            "multiline": true,
+            "scrollBars": "vertical"
+          }
+        },
+        {
+          "id": "download-progress",
+          "type": "ProgressBar",
+          "name": "下载进度",
+          "content": "",
+          "x": 278,
+          "y": 522,
+          "width": 480,
+          "height": 24,
+          "background": "#0F172A",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "minimum": 0,
+            "maximum": 100,
+            "value": 0
+          }
+        },
+        {
+          "id": "current-status",
+          "type": "Label",
+          "name": "当前状态",
+          "content": "就绪",
+          "x": 278,
+          "y": 552,
+          "width": 320,
+          "height": 24,
+          "background": "#172033",
+          "foreground": "#A7F3D0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false
+        },
+        {
+          "id": "plugin-status",
+          "type": "Label",
+          "name": "插件状态",
+          "content": "插件：未检测",
+          "x": 606,
+          "y": 552,
+          "width": 152,
+          "height": 24,
+          "background": "#172033",
+          "foreground": "#7DD3FC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false
+        },
+        {
+          "id": "btn-open-address",
+          "type": "Button",
+          "name": "打开地址",
+          "content": "打开地址",
+          "x": 766,
+          "y": 12,
+          "width": 100,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_打开地址_被单击"
+          }
+        },
+        {
+          "id": "btn-back",
+          "type": "Button",
+          "name": "后退",
+          "content": "后退",
+          "x": 872,
+          "y": 12,
+          "width": 70,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_后退_被单击"
+          }
+        },
+        {
+          "id": "btn-forward",
+          "type": "Button",
+          "name": "前进",
+          "content": "前进",
+          "x": 948,
+          "y": 12,
+          "width": 70,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_前进_被单击"
+          }
+        },
+        {
+          "id": "btn-refresh",
+          "type": "Button",
+          "name": "刷新",
+          "content": "刷新",
+          "x": 1024,
+          "y": 12,
+          "width": 70,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_刷新_被单击"
+          }
+        },
+        {
+          "id": "btn-more",
+          "type": "Button",
+          "name": "更多",
+          "content": "更多",
+          "x": 1100,
+          "y": 12,
+          "width": 70,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_更多_被单击"
+          }
+        },
+        {
+          "id": "btn-add",
+          "type": "Button",
+          "name": "添加浏览器",
+          "content": "添加浏览器",
+          "x": 12,
+          "y": 520,
+          "width": 120,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_添加浏览器_被单击"
+          }
+        },
+        {
+          "id": "btn-rename",
+          "type": "Button",
+          "name": "重命名浏览器",
+          "content": "重命名浏览器",
+          "x": 138,
+          "y": 520,
+          "width": 120,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_重命名浏览器_被单击"
+          }
+        },
+        {
+          "id": "btn-open-cache",
+          "type": "Button",
+          "name": "打开缓存目录",
+          "content": "打开缓存目录",
+          "x": 264,
+          "y": 520,
+          "width": 120,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_打开缓存目录_被单击"
+          }
+        },
+        {
+          "id": "open-download",
+          "type": "Button",
+          "name": "打开下载目录",
+          "content": "打开下载目录",
+          "x": 390,
+          "y": 520,
+          "width": 120,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_打开下载目录_被单击"
+          }
+        },
+        {
+          "id": "btn-clear-cache",
+          "type": "Button",
+          "name": "清理缓存",
+          "content": "清理缓存",
+          "x": 516,
+          "y": 520,
+          "width": 100,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_清理缓存_被单击"
+          }
+        },
+        {
+          "id": "btn-export-cookie",
+          "type": "Button",
+          "name": "导出当前Cookie",
+          "content": "导出当前Cookie",
+          "x": 622,
+          "y": 520,
+          "width": 120,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_导出当前Cookie_被单击"
+          }
+        },
+        {
+          "id": "btn-export-all-cookies",
+          "type": "Button",
+          "name": "导出全部Cookie",
+          "content": "导出全部Cookie",
+          "x": 748,
+          "y": 520,
+          "width": 120,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_导出全部Cookie_被单击"
+          }
+        },
+        {
+          "id": "btn-import-cookie",
+          "type": "Button",
+          "name": "导入Cookie",
+          "content": "导入Cookie",
+          "x": 874,
+          "y": 520,
+          "width": 100,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_导入Cookie_被单击"
+          }
+        },
+        {
+          "id": "btn-delete-keep",
+          "type": "Button",
+          "name": "删除保留数据",
+          "content": "删除保留数据",
+          "x": 980,
+          "y": 520,
+          "width": 110,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_删除保留数据_被单击"
+          }
+        },
+        {
+          "id": "btn-delete-clear",
+          "type": "Button",
+          "name": "删除并清数据",
+          "content": "删除并清数据",
+          "x": 1096,
+          "y": 520,
+          "width": 110,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_删除并清数据_被单击"
+          }
+        }
+      ]
+    }
+  ]
+}

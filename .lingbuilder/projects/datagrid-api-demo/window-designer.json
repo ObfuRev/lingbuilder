@@ -1,0 +1,3424 @@
+{
+  "schemaVersion": 2,
+  "id": "datagrid-api-demo",
+  "name": "DataGrid 接口实验室",
+  "resources": [
+    {
+      "id": "demo-image-list",
+      "type": "ImageList",
+      "name": "DataGrid示例图像列表",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "images": []
+    }
+  ],
+  "windows": [
+    {
+      "id": "main",
+      "fileName": "MainWindow.xml",
+      "className": "MainWindow",
+      "title": "Win32 DataGrid 新手逐项实验室（96 条接口）",
+      "width": 1550,
+      "height": 860,
+      "background": "#0F172A",
+      "description": "使用 9 个选项卡逐项演示 DataGrid；每个普通接口按钮只调用一条表格命令。",
+      "startupWindowId": "main",
+      "controls": [
+        {
+          "id": "beginner-title",
+          "type": "Label",
+          "name": "新手标题",
+          "content": "DataGrid 新手逐项实验室：一个按钮只演示一个接口",
+          "x": 20,
+          "y": 18,
+          "width": 860,
+          "height": 32,
+          "fontSize": 18,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": true,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "transparent",
+          "foreground": "#E0F2FE",
+          "isEnabled": true,
+          "visibility": "Visible"
+        },
+        {
+          "id": "beginner-guide",
+          "type": "Label",
+          "name": "新手说明",
+          "content": "先观察表格初始数据，再在右侧选项卡逐个点击。若执行了删除、清空或导入，请按 F5 重新开始。",
+          "x": 20,
+          "y": 50,
+          "width": 860,
+          "height": 22,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "transparent",
+          "foreground": "#94A3B8",
+          "isEnabled": true,
+          "visibility": "Visible"
+        },
+        {
+          "id": "static-grid",
+          "type": "DataGrid",
+          "name": "静态表格",
+          "content": "",
+          "x": 20,
+          "y": 80,
+          "width": 860,
+          "height": 430,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0F172A",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "properties": {
+            "dataGridColumns": [
+              {
+                "id": "select",
+                "title": "选择",
+                "type": "checkbox",
+                "width": 56
+              },
+              {
+                "id": "order_no",
+                "title": "订单号",
+                "type": "text",
+                "width": 120
+              },
+              {
+                "id": "quantity",
+                "title": "数量",
+                "type": "integer",
+                "width": 72
+              },
+              {
+                "id": "amount",
+                "title": "金额",
+                "type": "decimal",
+                "width": 96
+              },
+              {
+                "id": "date",
+                "title": "日期",
+                "type": "date",
+                "width": 110
+              },
+              {
+                "id": "enabled",
+                "title": "启用",
+                "type": "switch",
+                "width": 72
+              },
+              {
+                "id": "image",
+                "title": "图片",
+                "type": "image",
+                "width": 90
+              },
+              {
+                "id": "progress",
+                "title": "进度",
+                "type": "progress",
+                "width": 110
+              },
+              {
+                "id": "status",
+                "title": "状态",
+                "type": "combo",
+                "width": 100,
+                "options": [
+                  {
+                    "value": "new",
+                    "title": "待处理"
+                  },
+                  {
+                    "value": "processing",
+                    "title": "进行中"
+                  },
+                  {
+                    "value": "done",
+                    "title": "已完成"
+                  }
+                ]
+              },
+              {
+                "id": "actions",
+                "title": "操作",
+                "type": "buttons",
+                "width": 130,
+                "buttons": [
+                  {
+                    "id": "print",
+                    "title": "打印",
+                    "style": "normal"
+                  },
+                  {
+                    "id": "remove",
+                    "title": "删除",
+                    "style": "warn"
+                  }
+                ]
+              }
+            ],
+            "dataGridRows": [
+              {
+                "key": "order-1001",
+                "cells": {
+                  "select": true,
+                  "order_no": "2001",
+                  "quantity": "5",
+                  "amount": "88.80",
+                  "date": "2026-08-10",
+                  "enabled": true,
+                  "progress": "45",
+                  "status": "new"
+                },
+                "enabled": true
+              },
+              {
+                "key": "order-1002",
+                "cells": {
+                  "select": false,
+                  "order_no": "2002",
+                  "quantity": "1",
+                  "amount": "19.90",
+                  "date": "2026-08-11",
+                  "enabled": false,
+                  "progress": "20",
+                  "status": "processing"
+                },
+                "enabled": true
+              },
+              {
+                "key": "order-1003",
+                "cells": {
+                  "select": true,
+                  "order_no": "2003",
+                  "quantity": "8",
+                  "amount": "266.40",
+                  "date": "2026-08-12",
+                  "enabled": true,
+                  "progress": "75",
+                  "status": "done"
+                },
+                "enabled": true
+              }
+            ],
+            "virtualMode": false,
+            "selectionMode": "cell",
+            "emptyText": "暂无数据",
+            "headerHeight": 32,
+            "itemHeight": 32
+          },
+          "events": {
+            "CurrentCellChanged": "_静态表格_当前单元格被改变",
+            "SelectionRangeChanged": "_静态表格_选择区域被改变",
+            "CellClick": "_静态表格_单元格被单击",
+            "CellDoubleClick": "_静态表格_单元格被双击",
+            "EditStarting": "_静态表格_开始编辑",
+            "Validating": "_静态表格_正在验证",
+            "EditCommitted": "_静态表格_编辑已提交",
+            "EditCancelled": "_静态表格_编辑已取消",
+            "CheckBoxChanged": "_静态表格_选择框被改变",
+            "SwitchChanged": "_静态表格_开关被改变",
+            "ComboChanged": "_静态表格_组合框被改变",
+            "CellButtonClick": "_静态表格_单元格按钮被单击",
+            "CellImageClick": "_静态表格_单元格图片被单击",
+            "SortChanged": "_静态表格_排序被改变",
+            "FilterChanged": "_静态表格_筛选被改变"
+          }
+        },
+        {
+          "id": "virtual-title",
+          "type": "Label",
+          "name": "虚拟表格标题",
+          "content": "虚拟数据表格：滚动时触发“请求虚拟数据”事件",
+          "x": 20,
+          "y": 520,
+          "width": 860,
+          "height": 24,
+          "fontSize": 14,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": true,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "transparent",
+          "foreground": "#67E8F9",
+          "isEnabled": true,
+          "visibility": "Visible"
+        },
+        {
+          "id": "virtual-grid",
+          "type": "DataGrid",
+          "name": "虚拟表格",
+          "content": "",
+          "x": 20,
+          "y": 550,
+          "width": 860,
+          "height": 190,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0F172A",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "properties": {
+            "dataGridColumns": [
+              {
+                "id": "index",
+                "title": "序号",
+                "type": "text",
+                "width": 90
+              },
+              {
+                "id": "content",
+                "title": "内容",
+                "type": "text",
+                "width": 380
+              },
+              {
+                "id": "progress",
+                "title": "进度",
+                "type": "progress",
+                "width": 160
+              },
+              {
+                "id": "status",
+                "title": "状态",
+                "type": "text",
+                "width": 130
+              }
+            ],
+            "dataGridRows": [],
+            "virtualMode": true,
+            "virtualRowCount": 1000000,
+            "selectionMode": "cell",
+            "emptyText": "滚动触发虚拟数据请求",
+            "headerHeight": 30,
+            "itemHeight": 30
+          },
+          "events": {
+            "VirtualDataRequested": "_虚拟表格_请求虚拟数据"
+          }
+        },
+        {
+          "id": "operation-result",
+          "type": "Label",
+          "name": "操作结果",
+          "content": "操作结果：尚未点击接口按钮。返回值同时写入底部“输出”面板。",
+          "x": 20,
+          "y": 755,
+          "width": 860,
+          "height": 24,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#172033",
+          "foreground": "#A7F3D0",
+          "isEnabled": true,
+          "visibility": "Visible"
+        },
+        {
+          "id": "event-result",
+          "type": "Label",
+          "name": "事件日志",
+          "content": "事件日志：单击、双击、编辑、组合框、Switch、图片或按钮后会显示上下文。",
+          "x": 20,
+          "y": 785,
+          "width": 860,
+          "height": 24,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#172033",
+          "foreground": "#7DD3FC",
+          "isEnabled": true,
+          "visibility": "Visible"
+        },
+        {
+          "id": "api-tabs",
+          "type": "TabControl",
+          "name": "接口分类选项卡",
+          "content": "",
+          "x": 900,
+          "y": 20,
+          "width": 620,
+          "height": 790,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#111827",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "properties": {
+            "tabs": [
+              {
+                "id": "api-page-1",
+                "title": "1 列管理",
+                "image": -1
+              },
+              {
+                "id": "api-page-2",
+                "title": "2 特殊列",
+                "image": -1
+              },
+              {
+                "id": "api-page-3",
+                "title": "3 行与导入",
+                "image": -1
+              },
+              {
+                "id": "api-page-4",
+                "title": "4 基础单元格",
+                "image": -1
+              },
+              {
+                "id": "api-page-5",
+                "title": "5 特殊单元格",
+                "image": -1
+              },
+              {
+                "id": "api-page-6",
+                "title": "6 编辑选择",
+                "image": -1
+              },
+              {
+                "id": "api-page-7",
+                "title": "7 排序筛选",
+                "image": -1
+              },
+              {
+                "id": "api-page-8",
+                "title": "8 校验虚拟",
+                "image": -1
+              },
+              {
+                "id": "api-page-9",
+                "title": "9 事件上下文",
+                "image": -1
+              }
+            ],
+            "items": [
+              "1 列管理",
+              "2 特殊列",
+              "3 行与导入",
+              "4 基础单元格",
+              "5 特殊单元格",
+              "6 编辑选择",
+              "7 排序筛选",
+              "8 校验虚拟",
+              "9 事件上下文"
+            ],
+            "selectedIndex": 0,
+            "hideHeader": false
+          },
+          "events": {}
+        },
+        {
+          "id": "page-note-columns",
+          "type": "Label",
+          "name": "1 列管理说明",
+          "content": "建议从左到右按编号体验。删除演示列前，请先点击“添加列”。",
+          "x": 918,
+          "y": 76,
+          "width": 580,
+          "height": 38,
+          "fontSize": 11,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "transparent",
+          "foreground": "#BAE6FD",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-1"
+        },
+        {
+          "id": "api-button-001",
+          "type": "Button",
+          "name": "接口01_添加列",
+          "content": "01  表格_添加列",
+          "x": 918,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-1",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_添加列(控件名, 列ID, 标题, 类型, 宽度)\n追加具有稳定列 ID 的强类型列。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口01_添加列_被单击"
+          }
+        },
+        {
+          "id": "api-button-002",
+          "type": "Button",
+          "name": "接口02_插入列",
+          "content": "02  表格_插入列",
+          "x": 1210,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-1",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_插入列(控件名, 索引, 列ID, 标题, 类型, 宽度)\n在指定位置插入强类型列。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口02_插入列_被单击"
+          }
+        },
+        {
+          "id": "api-button-003",
+          "type": "Button",
+          "name": "接口03_删除列",
+          "content": "03  表格_删除列",
+          "x": 918,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#B45309",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-1",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_删除列(控件名, 列ID)\n删除列并同步删除全部行中的对应单元格。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口03_删除列_被单击"
+          }
+        },
+        {
+          "id": "api-button-004",
+          "type": "Button",
+          "name": "接口04_设置列标题",
+          "content": "04  表格_设置列标题",
+          "x": 1210,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-1",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置列标题(控件名, 列ID, 标题)\n设置列标题。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口04_设置列标题_被单击"
+          }
+        },
+        {
+          "id": "api-button-005",
+          "type": "Button",
+          "name": "接口05_设置列宽度",
+          "content": "05  表格_设置列宽度",
+          "x": 918,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-1",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置列宽度(控件名, 列ID, 宽度)\n设置列宽度。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口05_设置列宽度_被单击"
+          }
+        },
+        {
+          "id": "api-button-006",
+          "type": "Button",
+          "name": "接口06_设置列对齐",
+          "content": "06  表格_设置列对齐",
+          "x": 1210,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-1",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置列对齐(控件名, 列ID, 对齐方式)\n设置列为 left/center/right（居左/居中/居右）。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口06_设置列对齐_被单击"
+          }
+        },
+        {
+          "id": "api-button-007",
+          "type": "Button",
+          "name": "接口07_设置列只读",
+          "content": "07  表格_设置列只读",
+          "x": 918,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-1",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置列只读(控件名, 列ID, 只读)\n设置列只读状态。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口07_设置列只读_被单击"
+          }
+        },
+        {
+          "id": "api-button-008",
+          "type": "Button",
+          "name": "接口08_设置列显示",
+          "content": "08  表格_设置列显示",
+          "x": 1210,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-1",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置列显示(控件名, 列ID, 显示)\n设置列显示状态。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口08_设置列显示_被单击"
+          }
+        },
+        {
+          "id": "api-button-009",
+          "type": "Button",
+          "name": "接口09_设置列冻结",
+          "content": "09  表格_设置列冻结",
+          "x": 918,
+          "y": 309,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-1",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置列冻结(控件名, 列ID, 冻结)\n设置列冻结状态。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口09_设置列冻结_被单击"
+          }
+        },
+        {
+          "id": "api-button-010",
+          "type": "Button",
+          "name": "接口10_设置列格式",
+          "content": "10  表格_设置列格式",
+          "x": 1210,
+          "y": 309,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-1",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置列格式(控件名, 列ID, 格式)\n设置日期、数字等列的显示格式。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口10_设置列格式_被单击"
+          }
+        },
+        {
+          "id": "api-button-011",
+          "type": "Button",
+          "name": "接口11_取列数",
+          "content": "11  表格_取列数",
+          "x": 918,
+          "y": 355,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-1",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取列数(控件名)\n返回当前列数。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口11_取列数_被单击"
+          }
+        },
+        {
+          "id": "page-note-special",
+          "type": "Label",
+          "name": "2 特殊列说明",
+          "content": "配置组合框、选择框、Switch、图片、进度和多按钮列。",
+          "x": 918,
+          "y": 76,
+          "width": 580,
+          "height": 38,
+          "fontSize": 11,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "transparent",
+          "foreground": "#BAE6FD",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-2"
+        },
+        {
+          "id": "api-button-012",
+          "type": "Button",
+          "name": "接口12_添加列选项",
+          "content": "12  表格_添加列选项",
+          "x": 918,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-2",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_添加列选项(控件名, 列ID, 值, 显示文字)\n向组合框列追加稳定值与中文显示文字。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口12_添加列选项_被单击"
+          }
+        },
+        {
+          "id": "api-button-013",
+          "type": "Button",
+          "name": "接口13_清空列选项",
+          "content": "13  表格_清空列选项",
+          "x": 1210,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#B45309",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-2",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_清空列选项(控件名, 列ID)\n清空组合框列选项。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口13_清空列选项_被单击"
+          }
+        },
+        {
+          "id": "api-button-014",
+          "type": "Button",
+          "name": "接口14_设置单元格组合框选项",
+          "content": "14  表格_设置单元格组合框选项",
+          "x": 918,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-2",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置单元格组合框选项(控件名, 行键, 列ID, 选项TSV)\n用 TSV 覆盖单元格组合框选项。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口14_设置单元格组合框选项_被单击"
+          }
+        },
+        {
+          "id": "api-button-015",
+          "type": "Button",
+          "name": "接口15_设置选择框三态",
+          "content": "15  表格_设置选择框三态",
+          "x": 1210,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-2",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置选择框三态(控件名, 列ID, 启用三态)\n允许选择框使用 null 作为第三态。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口15_设置选择框三态_被单击"
+          }
+        },
+        {
+          "id": "api-button-016",
+          "type": "Button",
+          "name": "接口16_设置开关文字",
+          "content": "16  表格_设置开关文字",
+          "x": 918,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-2",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置开关文字(控件名, 列ID, 开启文字, 关闭文字)\n设置 Switch 的开启和关闭文字。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口16_设置开关文字_被单击"
+          }
+        },
+        {
+          "id": "api-button-017",
+          "type": "Button",
+          "name": "接口17_设置图片显示方式",
+          "content": "17  表格_设置图片显示方式",
+          "x": 1210,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-2",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置图片显示方式(控件名, 列ID, 显示方式)\n设置 tile/contain/cover/center/stretch（平铺/等比完整/等比铺满/原始居中/拉伸）图片显示方式。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口17_设置图片显示方式_被单击"
+          }
+        },
+        {
+          "id": "api-button-018",
+          "type": "Button",
+          "name": "接口18_设置进度范围",
+          "content": "18  表格_设置进度范围",
+          "x": 918,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-2",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置进度范围(控件名, 列ID, 最小值, 最大值, 显示文字)\n设置进度列范围及文字显示。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口18_设置进度范围_被单击"
+          }
+        },
+        {
+          "id": "api-button-019",
+          "type": "Button",
+          "name": "接口19_添加列按钮",
+          "content": "19  表格_添加列按钮",
+          "x": 1210,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-2",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_添加列按钮(控件名, 列ID, 按钮ID, 文字, 样式)\n向按钮列追加稳定按钮 ID。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口19_添加列按钮_被单击"
+          }
+        },
+        {
+          "id": "api-button-020",
+          "type": "Button",
+          "name": "接口20_清空列按钮",
+          "content": "20  表格_清空列按钮",
+          "x": 918,
+          "y": 309,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#B45309",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-2",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_清空列按钮(控件名, 列ID)\n清空按钮列定义。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口20_清空列按钮_被单击"
+          }
+        },
+        {
+          "id": "page-note-rows-import",
+          "type": "Label",
+          "name": "3 行与导入说明",
+          "content": "包含行操作、批量更新、TSV、CSV 和 Excel。破坏性操作后可重新按 F5。",
+          "x": 918,
+          "y": 76,
+          "width": 580,
+          "height": 38,
+          "fontSize": 11,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "transparent",
+          "foreground": "#BAE6FD",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3"
+        },
+        {
+          "id": "api-button-021",
+          "type": "Button",
+          "name": "接口21_添加行",
+          "content": "21  表格_添加行",
+          "x": 918,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_添加行(控件名, 行键, 单元格TSV)\n追加稳定行键的数据行。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口21_添加行_被单击"
+          }
+        },
+        {
+          "id": "api-button-022",
+          "type": "Button",
+          "name": "接口22_插入行",
+          "content": "22  表格_插入行",
+          "x": 1210,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_插入行(控件名, 索引, 行键, 单元格TSV)\n在指定位置插入数据行。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口22_插入行_被单击"
+          }
+        },
+        {
+          "id": "api-button-023",
+          "type": "Button",
+          "name": "接口23_删除行",
+          "content": "23  表格_删除行",
+          "x": 918,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#B45309",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_删除行(控件名, 行键)\n按稳定行键删除行。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口23_删除行_被单击"
+          }
+        },
+        {
+          "id": "api-button-024",
+          "type": "Button",
+          "name": "接口24_清空行",
+          "content": "24  表格_清空行",
+          "x": 1210,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#B45309",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_清空行(控件名)\n清空全部静态数据行。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口24_清空行_被单击"
+          }
+        },
+        {
+          "id": "api-button-025",
+          "type": "Button",
+          "name": "接口25_取行数",
+          "content": "25  表格_取行数",
+          "x": 918,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取行数(控件名)\n返回数据行数或虚拟总行数。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口25_取行数_被单击"
+          }
+        },
+        {
+          "id": "api-button-026",
+          "type": "Button",
+          "name": "接口26_取显示行键",
+          "content": "26  表格_取显示行键",
+          "x": 1210,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取显示行键(控件名, 索引)\n返回排序筛选后指定显示索引的稳定行键。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口26_取显示行键_被单击"
+          }
+        },
+        {
+          "id": "api-button-027",
+          "type": "Button",
+          "name": "接口27_滚动到行",
+          "content": "27  表格_滚动到行",
+          "x": 918,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_滚动到行(控件名, 索引)\n滚动到指定零基索引的行，保证该行完整进入表头下的可视区域；常用于追加行后定位到最新一行。行索引越界或控件不是数据表格返回失败值。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口27_滚动到行_被单击"
+          }
+        },
+        {
+          "id": "api-button-028",
+          "type": "Button",
+          "name": "接口28_开始批量更新",
+          "content": "28  表格_开始批量更新",
+          "x": 1210,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_开始批量更新(控件名)\n进入可嵌套批量更新并暂停重绘。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口28_开始批量更新_被单击"
+          }
+        },
+        {
+          "id": "api-button-029",
+          "type": "Button",
+          "name": "接口29_结束批量更新",
+          "content": "29  表格_结束批量更新",
+          "x": 918,
+          "y": 309,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_结束批量更新(控件名)\n结束一层批量更新，最外层恢复重绘。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口29_结束批量更新_被单击"
+          }
+        },
+        {
+          "id": "api-button-030",
+          "type": "Button",
+          "name": "接口30_加载TSV",
+          "content": "30  表格_加载TSV",
+          "x": 1210,
+          "y": 309,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#B45309",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_加载TSV(控件名, TSV文本, 首行为标题)\n按明确的引号和换行规则加载 TSV。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口30_加载TSV_被单击"
+          }
+        },
+        {
+          "id": "api-button-031",
+          "type": "Button",
+          "name": "接口31_导出TSV",
+          "content": "31  表格_导出TSV",
+          "x": 918,
+          "y": 355,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_导出TSV(控件名, 包含标题)\n导出可往返的 TSV。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口31_导出TSV_被单击"
+          }
+        },
+        {
+          "id": "api-button-032",
+          "type": "Button",
+          "name": "接口32_导入CSV",
+          "content": "32  表格_导入CSV",
+          "x": 1210,
+          "y": 355,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#B45309",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_导入CSV(控件名, CSV文本, 首行为标题)\n按 RFC 4180 风格引号规则导入 CSV。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口32_导入CSV_被单击"
+          }
+        },
+        {
+          "id": "api-button-033",
+          "type": "Button",
+          "name": "接口33_导出CSV",
+          "content": "33  表格_导出CSV",
+          "x": 918,
+          "y": 401,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_导出CSV(控件名, 包含标题)\n导出可往返的 CSV。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口33_导出CSV_被单击"
+          }
+        },
+        {
+          "id": "api-button-034",
+          "type": "Button",
+          "name": "接口34_导入Excel",
+          "content": "34  表格_导入Excel",
+          "x": 1210,
+          "y": 401,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#B45309",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-3",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_导入Excel(控件名, 文件路径, 首行为标题)\n从 .xlsx 文件的第一个工作表导入数据，无需安装 Microsoft Excel。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口34_导入Excel_被单击"
+          }
+        },
+        {
+          "id": "page-note-typed-cells",
+          "type": "Label",
+          "name": "4 基础单元格说明",
+          "content": "每个按钮只读写一个强类型单元格接口，固定演示行键为 order-1001。",
+          "x": 918,
+          "y": 76,
+          "width": 580,
+          "height": 38,
+          "fontSize": 11,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "transparent",
+          "foreground": "#BAE6FD",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-4"
+        },
+        {
+          "id": "api-button-035",
+          "type": "Button",
+          "name": "接口35_导出Excel",
+          "content": "35  表格_导出Excel",
+          "x": 918,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-4",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_导出Excel(控件名, 文件路径, 包含标题)\n将静态数据导出为标准 .xlsx 文件，无需安装 Microsoft Excel。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口35_导出Excel_被单击"
+          }
+        },
+        {
+          "id": "api-button-036",
+          "type": "Button",
+          "name": "接口36_置文本",
+          "content": "36  表格_置文本",
+          "x": 1210,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-4",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_置文本(控件名, 行键, 列ID, 文本)\n写入文本单元格。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口36_置文本_被单击"
+          }
+        },
+        {
+          "id": "api-button-037",
+          "type": "Button",
+          "name": "接口37_取文本",
+          "content": "37  表格_取文本",
+          "x": 918,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-4",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取文本(控件名, 行键, 列ID)\n读取单元格显示文本。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口37_取文本_被单击"
+          }
+        },
+        {
+          "id": "api-button-038",
+          "type": "Button",
+          "name": "接口38_置整数",
+          "content": "38  表格_置整数",
+          "x": 1210,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-4",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_置整数(控件名, 行键, 列ID, 数值)\n写入整数单元格。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口38_置整数_被单击"
+          }
+        },
+        {
+          "id": "api-button-039",
+          "type": "Button",
+          "name": "接口39_取整数",
+          "content": "39  表格_取整数",
+          "x": 918,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-4",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取整数(控件名, 行键, 列ID)\n读取整数单元格。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口39_取整数_被单击"
+          }
+        },
+        {
+          "id": "api-button-040",
+          "type": "Button",
+          "name": "接口40_置小数",
+          "content": "40  表格_置小数",
+          "x": 1210,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-4",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_置小数(控件名, 行键, 列ID, 数值)\n写入小数单元格。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口40_置小数_被单击"
+          }
+        },
+        {
+          "id": "api-button-041",
+          "type": "Button",
+          "name": "接口41_取小数",
+          "content": "41  表格_取小数",
+          "x": 918,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-4",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取小数(控件名, 行键, 列ID)\n读取小数单元格。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口41_取小数_被单击"
+          }
+        },
+        {
+          "id": "api-button-042",
+          "type": "Button",
+          "name": "接口42_置逻辑",
+          "content": "42  表格_置逻辑",
+          "x": 1210,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-4",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_置逻辑(控件名, 行键, 列ID, 数值)\n写入选择框或 Switch 单元格。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口42_置逻辑_被单击"
+          }
+        },
+        {
+          "id": "api-button-043",
+          "type": "Button",
+          "name": "接口43_取逻辑",
+          "content": "43  表格_取逻辑",
+          "x": 918,
+          "y": 309,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-4",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取逻辑(控件名, 行键, 列ID)\n读取逻辑单元格。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口43_取逻辑_被单击"
+          }
+        },
+        {
+          "id": "api-button-044",
+          "type": "Button",
+          "name": "接口44_置日期",
+          "content": "44  表格_置日期",
+          "x": 1210,
+          "y": 309,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-4",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_置日期(控件名, 行键, 列ID, 日期)\n写入 ISO 日期文本。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口44_置日期_被单击"
+          }
+        },
+        {
+          "id": "page-note-rich-cells",
+          "type": "Label",
+          "name": "5 特殊单元格说明",
+          "content": "分别体验图片、进度、组合框和多按钮单元格覆盖。",
+          "x": 918,
+          "y": 76,
+          "width": 580,
+          "height": 38,
+          "fontSize": 11,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "transparent",
+          "foreground": "#BAE6FD",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5"
+        },
+        {
+          "id": "api-button-045",
+          "type": "Button",
+          "name": "接口45_取日期",
+          "content": "45  表格_取日期",
+          "x": 918,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取日期(控件名, 行键, 列ID)\n读取日期文本。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口45_取日期_被单击"
+          }
+        },
+        {
+          "id": "api-button-046",
+          "type": "Button",
+          "name": "接口46_置图片",
+          "content": "46  表格_置图片",
+          "x": 1210,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_置图片(控件名, 行键, 列ID, 项目路径)\n设置项目资源或运行时文件路径图片。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口46_置图片_被单击"
+          }
+        },
+        {
+          "id": "api-button-047",
+          "type": "Button",
+          "name": "接口47_置图像列表图片",
+          "content": "47  表格_置图像列表图片",
+          "x": 918,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_置图像列表图片(控件名, 行键, 列ID, 图像列表, 图片索引)\n设置 ImageList 图片引用。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口47_置图像列表图片_被单击"
+          }
+        },
+        {
+          "id": "api-button-048",
+          "type": "Button",
+          "name": "接口48_清除图片",
+          "content": "48  表格_清除图片",
+          "x": 1210,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_清除图片(控件名, 行键, 列ID)\n清除图片单元格。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口48_清除图片_被单击"
+          }
+        },
+        {
+          "id": "api-button-049",
+          "type": "Button",
+          "name": "接口49_置进度",
+          "content": "49  表格_置进度",
+          "x": 918,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_置进度(控件名, 行键, 列ID, 进度)\n设置进度值并限制到列范围。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口49_置进度_被单击"
+          }
+        },
+        {
+          "id": "api-button-050",
+          "type": "Button",
+          "name": "接口50_取进度",
+          "content": "50  表格_取进度",
+          "x": 1210,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取进度(控件名, 行键, 列ID)\n读取进度值。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口50_取进度_被单击"
+          }
+        },
+        {
+          "id": "api-button-051",
+          "type": "Button",
+          "name": "接口51_设置进度状态",
+          "content": "51  表格_设置进度状态",
+          "x": 918,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置进度状态(控件名, 行键, 列ID, 状态)\n设置 normal/success/warning/error/paused/indeterminate 状态。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口51_设置进度状态_被单击"
+          }
+        },
+        {
+          "id": "api-button-052",
+          "type": "Button",
+          "name": "接口52_取进度状态",
+          "content": "52  表格_取进度状态",
+          "x": 1210,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取进度状态(控件名, 行键, 列ID)\n读取进度单元格状态；未覆盖时返回 normal。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口52_取进度状态_被单击"
+          }
+        },
+        {
+          "id": "api-button-053",
+          "type": "Button",
+          "name": "接口53_置组合框值",
+          "content": "53  表格_置组合框值",
+          "x": 918,
+          "y": 309,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_置组合框值(控件名, 行键, 列ID, 值)\n按稳定值设置组合框单元格。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口53_置组合框值_被单击"
+          }
+        },
+        {
+          "id": "api-button-054",
+          "type": "Button",
+          "name": "接口54_取组合框值",
+          "content": "54  表格_取组合框值",
+          "x": 1210,
+          "y": 309,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取组合框值(控件名, 行键, 列ID)\n读取组合框稳定值。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口54_取组合框值_被单击"
+          }
+        },
+        {
+          "id": "api-button-055",
+          "type": "Button",
+          "name": "接口55_取组合框文字",
+          "content": "55  表格_取组合框文字",
+          "x": 918,
+          "y": 355,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取组合框文字(控件名, 行键, 列ID)\n读取组合框中文显示文字。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口55_取组合框文字_被单击"
+          }
+        },
+        {
+          "id": "api-button-056",
+          "type": "Button",
+          "name": "接口56_设置按钮显示",
+          "content": "56  表格_设置按钮显示",
+          "x": 1210,
+          "y": 355,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置按钮显示(控件名, 行键, 列ID, 按钮ID, 显示)\n覆盖指定单元格按钮显示状态。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口56_设置按钮显示_被单击"
+          }
+        },
+        {
+          "id": "api-button-057",
+          "type": "Button",
+          "name": "接口57_设置按钮启用",
+          "content": "57  表格_设置按钮启用",
+          "x": 918,
+          "y": 401,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置按钮启用(控件名, 行键, 列ID, 按钮ID, 启用)\n覆盖指定单元格按钮启用状态。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口57_设置按钮启用_被单击"
+          }
+        },
+        {
+          "id": "api-button-058",
+          "type": "Button",
+          "name": "接口58_设置按钮文字",
+          "content": "58  表格_设置按钮文字",
+          "x": 1210,
+          "y": 401,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-5",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置按钮文字(控件名, 行键, 列ID, 按钮ID, 文字)\n覆盖指定单元格按钮文字。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口58_设置按钮文字_被单击"
+          }
+        },
+        {
+          "id": "page-note-editing",
+          "type": "Label",
+          "name": "6 编辑选择说明",
+          "content": "开始、提交、取消编辑以及当前单元格、行选择、勾选统计与勾选批量删除均为独立按钮。",
+          "x": 918,
+          "y": 76,
+          "width": 580,
+          "height": 38,
+          "fontSize": 11,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "transparent",
+          "foreground": "#BAE6FD",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6"
+        },
+        {
+          "id": "api-button-059",
+          "type": "Button",
+          "name": "接口59_设置按钮样式",
+          "content": "59  表格_设置按钮样式",
+          "x": 918,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置按钮样式(控件名, 行键, 列ID, 按钮ID, 样式)\n覆盖指定单元格按钮样式。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口59_设置按钮样式_被单击"
+          }
+        },
+        {
+          "id": "api-button-060",
+          "type": "Button",
+          "name": "接口60_开始编辑",
+          "content": "60  表格_开始编辑",
+          "x": 1210,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_开始编辑(控件名, 行键, 列ID)\n开始单元格原地编辑。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口60_开始编辑_被单击"
+          }
+        },
+        {
+          "id": "api-button-061",
+          "type": "Button",
+          "name": "接口61_提交编辑",
+          "content": "61  表格_提交编辑",
+          "x": 918,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_提交编辑(控件名)\n提交当前临时编辑器。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口61_提交编辑_被单击"
+          }
+        },
+        {
+          "id": "api-button-062",
+          "type": "Button",
+          "name": "接口62_取消编辑",
+          "content": "62  表格_取消编辑",
+          "x": 1210,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取消编辑(控件名)\n取消当前临时编辑器。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口62_取消编辑_被单击"
+          }
+        },
+        {
+          "id": "api-button-063",
+          "type": "Button",
+          "name": "接口63_设置当前单元格",
+          "content": "63  表格_设置当前单元格",
+          "x": 918,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置当前单元格(控件名, 行键, 列ID)\n设置键盘当前单元格。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口63_设置当前单元格_被单击"
+          }
+        },
+        {
+          "id": "api-button-064",
+          "type": "Button",
+          "name": "接口64_取当前行键",
+          "content": "64  表格_取当前行键",
+          "x": 1210,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取当前行键(控件名)\n读取当前单元格行键。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口64_取当前行键_被单击"
+          }
+        },
+        {
+          "id": "api-button-065",
+          "type": "Button",
+          "name": "接口65_取当前列ID",
+          "content": "65  表格_取当前列ID",
+          "x": 918,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取当前列ID(控件名)\n读取当前单元格列 ID。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口65_取当前列ID_被单击"
+          }
+        },
+        {
+          "id": "api-button-066",
+          "type": "Button",
+          "name": "接口66_设置行选中",
+          "content": "66  表格_设置行选中",
+          "x": 1210,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置行选中(控件名, 行键, 选中)\n设置行选择状态。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口66_设置行选中_被单击"
+          }
+        },
+        {
+          "id": "api-button-067",
+          "type": "Button",
+          "name": "接口67_取行是否选中",
+          "content": "67  表格_取行是否选中",
+          "x": 918,
+          "y": 309,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取行是否选中(控件名, 行键)\n按稳定行键读取该行是否处于选中状态。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口67_取行是否选中_被单击"
+          }
+        },
+        {
+          "id": "api-button-068",
+          "type": "Button",
+          "name": "接口68_取选中行数",
+          "content": "68  表格_取选中行数",
+          "x": 1210,
+          "y": 309,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取选中行数(控件名)\n读取选中行数量。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口68_取选中行数_被单击"
+          }
+        },
+        {
+          "id": "api-button-069",
+          "type": "Button",
+          "name": "接口69_取选中行键",
+          "content": "69  表格_取选中行键",
+          "x": 918,
+          "y": 355,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取选中行键(控件名, 索引)\n读取第 N 个选中行键。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口69_取选中行键_被单击"
+          }
+        },
+        {
+          "id": "api-button-070",
+          "type": "Button",
+          "name": "接口70_取勾选行数",
+          "content": "70  表格_取勾选行数",
+          "x": 1210,
+          "y": 355,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取勾选行数(控件名, 列ID)\n统计选择框列中处于勾选状态的行数，按当前排序筛选后的显示顺序统计；列ID不存在或不是选择框列返回 0 并记录中文错误。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口70_取勾选行数_被单击"
+          }
+        },
+        {
+          "id": "api-button-071",
+          "type": "Button",
+          "name": "接口71_取勾选行键",
+          "content": "71  表格_取勾选行键",
+          "x": 918,
+          "y": 401,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取勾选行键(控件名, 列ID, 索引)\n按显示顺序读取选择框列中第 N 个勾选行的稳定行键；列ID不是选择框列或索引越界返回空文本并记录中文错误。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口71_取勾选行键_被单击"
+          }
+        },
+        {
+          "id": "api-button-072",
+          "type": "Button",
+          "name": "接口72_删除勾选行",
+          "content": "72  表格_删除勾选行",
+          "x": 1210,
+          "y": 401,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#B45309",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_删除勾选行(控件名, 列ID)\n批量删除选择框列中全部勾选行，整批记入一次撤销事务；没有勾选行时直接返回真，虚拟模式数据不在控件内返回失败。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口72_删除勾选行_被单击"
+          }
+        },
+        {
+          "id": "api-button-073",
+          "type": "Button",
+          "name": "接口73_撤销",
+          "content": "73  表格_撤销",
+          "x": 918,
+          "y": 447,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-6",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_撤销(控件名)\n撤销最近一次数据事务。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口73_撤销_被单击"
+          }
+        },
+        {
+          "id": "page-note-query",
+          "type": "Label",
+          "name": "7 排序筛选说明",
+          "content": "排序、筛选和搜索会立即反映在左侧静态表格中。",
+          "x": 918,
+          "y": 76,
+          "width": 580,
+          "height": 38,
+          "fontSize": 11,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "transparent",
+          "foreground": "#BAE6FD",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-7"
+        },
+        {
+          "id": "api-button-074",
+          "type": "Button",
+          "name": "接口74_重做",
+          "content": "74  表格_重做",
+          "x": 918,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-7",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_重做(控件名)\n重做最近一次数据事务。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口74_重做_被单击"
+          }
+        },
+        {
+          "id": "api-button-075",
+          "type": "Button",
+          "name": "接口75_设置排序",
+          "content": "75  表格_设置排序",
+          "x": 1210,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-7",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置排序(控件名, 列ID, 升序)\n替换为单列强类型排序。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口75_设置排序_被单击"
+          }
+        },
+        {
+          "id": "api-button-076",
+          "type": "Button",
+          "name": "接口76_添加排序",
+          "content": "76  表格_添加排序",
+          "x": 918,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-7",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_添加排序(控件名, 列ID, 升序)\n追加多列强类型排序。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口76_添加排序_被单击"
+          }
+        },
+        {
+          "id": "api-button-077",
+          "type": "Button",
+          "name": "接口77_清除排序",
+          "content": "77  表格_清除排序",
+          "x": 1210,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-7",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_清除排序(控件名)\n清除排序状态。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口77_清除排序_被单击"
+          }
+        },
+        {
+          "id": "api-button-078",
+          "type": "Button",
+          "name": "接口78_设置列筛选",
+          "content": "78  表格_设置列筛选",
+          "x": 918,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-7",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置列筛选(控件名, 列ID, 规则, 值)\n设置列筛选。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口78_设置列筛选_被单击"
+          }
+        },
+        {
+          "id": "api-button-079",
+          "type": "Button",
+          "name": "接口79_清除列筛选",
+          "content": "79  表格_清除列筛选",
+          "x": 1210,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-7",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_清除列筛选(控件名, 列ID)\n清除指定列筛选。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口79_清除列筛选_被单击"
+          }
+        },
+        {
+          "id": "api-button-080",
+          "type": "Button",
+          "name": "接口80_清除全部筛选",
+          "content": "80  表格_清除全部筛选",
+          "x": 918,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-7",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_清除全部筛选(控件名)\n清除全部列筛选。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口80_清除全部筛选_被单击"
+          }
+        },
+        {
+          "id": "page-note-validation-virtual",
+          "type": "Label",
+          "name": "8 校验虚拟说明",
+          "content": "校验拒绝只能在“正在验证”事件中调用；虚拟请求由下方表格滚动触发。",
+          "x": 918,
+          "y": 76,
+          "width": 580,
+          "height": 38,
+          "fontSize": 11,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "transparent",
+          "foreground": "#BAE6FD",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-8"
+        },
+        {
+          "id": "api-button-081",
+          "type": "Button",
+          "name": "接口81_设置搜索文字",
+          "content": "81  表格_设置搜索文字",
+          "x": 918,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-8",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置搜索文字(控件名, 搜索文字)\n设置跨列搜索文字。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口81_设置搜索文字_被单击"
+          }
+        },
+        {
+          "id": "api-button-082",
+          "type": "Button",
+          "name": "接口82_设置列必填",
+          "content": "82  表格_设置列必填",
+          "x": 1210,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-8",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置列必填(控件名, 列ID, 必填)\n设置列必填校验。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口82_设置列必填_被单击"
+          }
+        },
+        {
+          "id": "api-button-083",
+          "type": "Button",
+          "name": "接口83_设置列数值范围",
+          "content": "83  表格_设置列数值范围",
+          "x": 918,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-8",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置列数值范围(控件名, 列ID, 最小值, 最大值)\n设置整数、小数或进度列数值范围。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口83_设置列数值范围_被单击"
+          }
+        },
+        {
+          "id": "api-button-084",
+          "type": "Button",
+          "name": "接口84_设置列文本规则",
+          "content": "84  表格_设置列文本规则",
+          "x": 1210,
+          "y": 171,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-8",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置列文本规则(控件名, 列ID, 正则表达式)\n设置文本校验规则。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口84_设置列文本规则_被单击"
+          }
+        },
+        {
+          "id": "api-button-086",
+          "type": "Button",
+          "name": "接口86_设置虚拟行数",
+          "content": "86  表格_设置虚拟行数",
+          "x": 918,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-8",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_设置虚拟行数(控件名, 行数)\n设置虚拟数据总行数并清空过期缓存。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口86_设置虚拟行数_被单击"
+          }
+        },
+        {
+          "id": "api-button-087",
+          "type": "Button",
+          "name": "接口87_取请求起始行",
+          "content": "87  表格_取请求起始行",
+          "x": 1210,
+          "y": 217,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-8",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取请求起始行(控件名)\n读取当前异步虚拟数据请求起始行。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口87_取请求起始行_被单击"
+          }
+        },
+        {
+          "id": "api-button-088",
+          "type": "Button",
+          "name": "接口88_取请求数量",
+          "content": "88  表格_取请求数量",
+          "x": 918,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-8",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_取请求数量(控件名)\n读取当前异步虚拟数据请求数量。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口88_取请求数量_被单击"
+          }
+        },
+        {
+          "id": "api-button-089",
+          "type": "Button",
+          "name": "接口89_提交虚拟行",
+          "content": "89  表格_提交虚拟行",
+          "x": 1210,
+          "y": 263,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#0E7490",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-8",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_提交虚拟行(控件名, 索引, 行键, 单元格TSV)\n提交一条虚拟缓存行。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口89_提交虚拟行_被单击"
+          }
+        },
+        {
+          "id": "page-note-events",
+          "type": "Label",
+          "name": "9 事件上下文说明",
+          "content": "事件上下文接口只能在表格事件处理器中读取；请按页面提示操作左侧表格。",
+          "x": 918,
+          "y": 76,
+          "width": 580,
+          "height": 38,
+          "fontSize": 11,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "transparent",
+          "foreground": "#BAE6FD",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-9"
+        },
+        {
+          "id": "api-button-090",
+          "type": "Button",
+          "name": "接口90_清除虚拟缓存",
+          "content": "90  表格_清除虚拟缓存",
+          "x": 918,
+          "y": 125,
+          "width": 276,
+          "height": 34,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#2563EB",
+          "foreground": "#F8FAFC",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-9",
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6,
+            "toolTip": "表格_清除虚拟缓存(控件名)\n清除虚拟数据缓存。",
+            "toolTipDelay": 250
+          },
+          "events": {
+            "Click": "_接口90_清除虚拟缓存_被单击"
+          }
+        },
+        {
+          "id": "event-card-1",
+          "type": "Label",
+          "name": "事件说明1",
+          "content": "92 取事件行键：单击表格行或改变当前单元格时读取。",
+          "x": 924,
+          "y": 185,
+          "width": 560,
+          "height": 38,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#1E293B",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-9"
+        },
+        {
+          "id": "event-card-2",
+          "type": "Label",
+          "name": "事件说明2",
+          "content": "93 取事件列ID：单击、排序或筛选列时读取。",
+          "x": 924,
+          "y": 237,
+          "width": 560,
+          "height": 38,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#1E293B",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-9"
+        },
+        {
+          "id": "event-card-3",
+          "type": "Label",
+          "name": "事件说明3",
+          "content": "94 取事件按钮ID：点击“操作”列中的按钮时读取。",
+          "x": 924,
+          "y": 289,
+          "width": 560,
+          "height": 38,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#1E293B",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-9"
+        },
+        {
+          "id": "event-card-4",
+          "type": "Label",
+          "name": "事件说明4",
+          "content": "95 取事件旧值：开始编辑或提交编辑时读取。",
+          "x": 924,
+          "y": 341,
+          "width": 560,
+          "height": 38,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#1E293B",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-9"
+        },
+        {
+          "id": "event-card-5",
+          "type": "Label",
+          "name": "事件说明5",
+          "content": "96 取事件新值：提交、Switch、组合框改变时读取。",
+          "x": 924,
+          "y": 393,
+          "width": 560,
+          "height": 38,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#1E293B",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-9"
+        },
+        {
+          "id": "event-card-6",
+          "type": "Label",
+          "name": "事件说明6",
+          "content": "86 拒绝本次编辑：把订单号改成“禁止”即可触发。",
+          "x": 924,
+          "y": 445,
+          "width": 560,
+          "height": 38,
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "background": "#1E293B",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "parentId": "api-tabs",
+          "containerSlot": "api-page-9"
+        }
+      ]
+    }
+  ]
+}

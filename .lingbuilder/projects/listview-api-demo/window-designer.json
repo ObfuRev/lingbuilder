@@ -1,0 +1,503 @@
+{
+  "schemaVersion": 2,
+  "id": "listview-api-demo",
+  "name": "ListView 完整接口",
+  "resources": [
+    {
+      "id": "listview-demo-image-list",
+      "type": "ImageList",
+      "name": "ListView示例图像列表",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "images": []
+    }
+  ],
+  "startupWindowId": "main",
+  "windows": [
+    {
+      "id": "main",
+      "fileName": "MainWindow.xml",
+      "className": "MainWindow",
+      "title": "ListView 完整接口",
+      "width": 920,
+      "height": 620,
+      "background": "#0F172A",
+      "description": "覆盖 ListView 全部公开命令的接口实验室。",
+      "controls": [
+        {
+          "id": "normal-list",
+          "type": "ListView",
+          "name": "普通列表",
+          "content": "",
+          "x": 16,
+          "y": 16,
+          "width": 430,
+          "height": 250,
+          "background": "#0F172A",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "columns": [
+              {
+                "title": "序号"
+              },
+              {
+                "title": "名称"
+              },
+              {
+                "title": "长度"
+              },
+              {
+                "title": "项数"
+              }
+            ],
+            "items": [],
+            "view": "details",
+            "gridLines": true,
+            "multiple": true,
+            "virtualMode": false
+          },
+          "events": {
+            "SelectionChanged": "_普通列表_选择项被改变",
+            "DoubleClick": "_普通列表_被双击",
+            "ColumnClick": "_普通列表_列被单击"
+          }
+        },
+        {
+          "id": "virtual-list",
+          "type": "ListView",
+          "name": "虚拟列表",
+          "content": "",
+          "x": 16,
+          "y": 276,
+          "width": 430,
+          "height": 250,
+          "background": "#0F172A",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "columns": [
+              {
+                "title": "序号"
+              },
+              {
+                "title": "名称"
+              },
+              {
+                "title": "长度"
+              },
+              {
+                "title": "项数"
+              }
+            ],
+            "items": [],
+            "view": "details",
+            "gridLines": true,
+            "multiple": false,
+            "virtualMode": true
+          },
+          "events": {
+            "SelectionChanged": "_虚拟列表_选择项被改变",
+            "DoubleClick": "_虚拟列表_被双击",
+            "ColumnClick": "_虚拟列表_列被单击"
+          }
+        },
+        {
+          "id": "status-label",
+          "type": "Label",
+          "name": "接口状态",
+          "content": "就绪：等待接口调用。",
+          "x": 16,
+          "y": 536,
+          "width": 830,
+          "height": 24,
+          "background": "#172033",
+          "foreground": "#A7F3D0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false
+        },
+        {
+          "id": "btn-01",
+          "type": "Button",
+          "name": "重建普通列表按钮",
+          "content": "重建普通列表",
+          "x": 462,
+          "y": 16,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_重建普通列表按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-02",
+          "type": "Button",
+          "name": "重建虚拟列表按钮",
+          "content": "重建虚拟列表",
+          "x": 462,
+          "y": 56,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_重建虚拟列表按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-03",
+          "type": "Button",
+          "name": "运行全部接口按钮",
+          "content": "运行全部接口",
+          "x": 654,
+          "y": 16,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_运行全部接口按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-04",
+          "type": "Button",
+          "name": "清空按钮",
+          "content": "清空",
+          "x": 654,
+          "y": 56,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_清空按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-05",
+          "type": "Button",
+          "name": "插入行按钮",
+          "content": "插入行",
+          "x": 846,
+          "y": 16,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_插入行按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-06",
+          "type": "Button",
+          "name": "修改单元格按钮",
+          "content": "修改单元格",
+          "x": 846,
+          "y": 56,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_修改单元格按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-07",
+          "type": "Button",
+          "name": "删除选中行按钮",
+          "content": "删除选中行",
+          "x": 1038,
+          "y": 16,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_删除选中行按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-08",
+          "type": "Button",
+          "name": "排序按钮",
+          "content": "排序",
+          "x": 1038,
+          "y": 56,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_排序按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-09",
+          "type": "Button",
+          "name": "列与状态测试按钮",
+          "content": "列与状态测试",
+          "x": 1230,
+          "y": 16,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_列与状态测试按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-10",
+          "type": "Button",
+          "name": "视图样式测试按钮",
+          "content": "视图样式测试",
+          "x": 1230,
+          "y": 56,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_视图样式测试按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-11",
+          "type": "Button",
+          "name": "图标布局测试按钮",
+          "content": "图标布局测试",
+          "x": 1422,
+          "y": 16,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_图标布局测试按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-12",
+          "type": "Button",
+          "name": "分组标签测试按钮",
+          "content": "分组标签测试",
+          "x": 1422,
+          "y": 56,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_分组标签测试按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-13",
+          "type": "Button",
+          "name": "读取单元格按钮",
+          "content": "读取单元格",
+          "x": 1614,
+          "y": 16,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_读取单元格按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-14",
+          "type": "Button",
+          "name": "读取选中行按钮",
+          "content": "读取选中行",
+          "x": 1614,
+          "y": 56,
+          "width": 180,
+          "height": 32,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_读取选中行按钮_被单击"
+          }
+        }
+      ]
+    }
+  ]
+}

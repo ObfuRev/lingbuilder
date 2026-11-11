@@ -1611,6 +1611,60 @@
       "configRoot": "config/datagrid-thread-demo",
       "designerPath": ".lingbuilder/projects/datagrid-thread-demo/window-designer.json",
       "references": []
+    },
+    {
+      "type": "visual-cpp",
+      "id": "net-ipv6-demo",
+      "name": "TCP与UDP IPv6通信演示",
+      "sourceRoot": "examples/net-ipv6-demo/src",
+      "designerPath": "examples/net-ipv6-demo/designer/net-ipv6-demo.json",
+      "references": [],
+      "configRoot": "config/net-ipv6-demo"
+    },
+    {
+      "type": "visual-cpp",
+      "id": "datagrid-api-demo",
+      "name": "DataGrid新手逐项示例",
+      "sourceRoot": "src/datagrid-api-demo",
+      "designerPath": ".lingbuilder/projects/datagrid-api-demo/window-designer.json",
+      "references": [],
+      "configRoot": "config/datagrid-api-demo"
+    },
+    {
+      "type": "visual-cpp",
+      "id": "listview-api-demo",
+      "name": "ListView完整示例",
+      "sourceRoot": "src/listview-api-demo",
+      "designerPath": ".lingbuilder/projects/listview-api-demo/window-designer.json",
+      "references": [],
+      "configRoot": "config/listview-api-demo"
+    },
+    {
+      "type": "visual-cpp",
+      "id": "format-text-api-demo",
+      "name": "格式化文本示例",
+      "sourceRoot": "src/format-text-api-demo",
+      "designerPath": ".lingbuilder/projects/format-text-api-demo/window-designer.json",
+      "references": [],
+      "configRoot": "config/format-text-api-demo"
+    },
+    {
+      "type": "visual-cpp",
+      "id": "fbro-ui",
+      "name": "FBro UI 演示",
+      "sourceRoot": "src/fbro-ui",
+      "designerPath": ".lingbuilder/projects/fbro-ui/window-designer.json",
+      "references": [],
+      "configRoot": "config/fbro-ui"
+    },
+    {
+      "type": "visual-cpp",
+      "id": "win32-fbro-multi-browser-manager",
+      "name": "FBro多浏览器管理器",
+      "sourceRoot": "src/win32-fbro-multi-browser-manager",
+      "designerPath": ".lingbuilder/projects/win32-fbro-multi-browser-manager/window-designer.json",
+      "references": [],
+      "configRoot": "config/win32-fbro-multi-browser-manager"
     }
   ]
 }

@@ -67,8 +67,11 @@ function quote(value: string): string {
 
 function demoArgument(command: string, parameter: { name: string; type: string }): string {
   const virtual = /虚拟|请求/u.test(command);
+  // 参数名同名不同型（如「显示文字」在 表格_添加列选项 是文本、在 表格_设置进度范围 是逻辑）时
+  // 必须按命令区分，不能只按参数名给值。
   const values: Record<string, string> = {
-    控件名: quote(virtual ? '虚拟表格' : '静态表格'),
+    // 控件名是 controlRef 参数：必须裸控件标识符，禁止 quote() 包成字符串（controlRef 红线）。
+    控件名: virtual ? '虚拟表格' : '静态表格',
     行键: quote('order-1001'),
     列ID: quote(demoColumn(command)),
     标题: quote('演示标题'),
@@ -91,15 +94,17 @@ function demoArgument(command: string, parameter: { name: string; type: string }
     文本: quote('1001-A'),
     日期: quote('2026-08-08'),
     项目路径: quote('assets/datagrid-api-demo/datagrid-demo.png'),
-    图像列表ID: 'DataGrid示例图像列表',
+    图像列表: 'DataGrid示例图像列表',
     状态: quote('success'),
     规则: quote('equals'),
     搜索文字: quote('1002'),
     正则表达式: quote('^[0-9]{4,8}$'),
     原因: quote('新手示例拒绝了本次编辑。')
   };
-  if (values[parameter.name]) return values[parameter.name];
+  // 逻辑型参数不接受文本值（「显示文字」在部分命令是 bool）；controlRef 参数兜底必须是裸控件名。
+  if (values[parameter.name] && parameter.type !== 'bool') return values[parameter.name];
   if (parameter.type === 'bool') return '真';
+  if (parameter.type === 'controlRef') return virtual ? '虚拟表格' : '静态表格';
   if (parameter.type === 'double') return parameter.name === '最大值' ? '100.0' : parameter.name === '进度' ? '42.5' : '0.0';
   if (parameter.type === 'int' || parameter.type === 'longLong' || parameter.type === 'handle') {
     if (parameter.name === '宽度') return '120';

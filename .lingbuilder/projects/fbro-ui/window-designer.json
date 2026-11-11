@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 2,
+  "id": "fbro-ui",
+  "name": "FBro UI 演示",
+  "resources": [],
+  "startupWindowId": "main",
+  "windows": [
+    {
+      "id": "main",
+      "fileName": "MainWindow.xml",
+      "className": "MainWindow",
+      "title": "FBro UI 演示",
+      "width": 800,
+      "height": 620,
+      "background": "#0F172A",
+      "description": "FBro 内嵌与原生 UI 浏览器演示。",
+      "controls": [
+        {
+          "id": "fbro-1",
+          "type": "FBroBrowser",
+          "name": "FBro指纹浏览器1",
+          "content": "",
+          "x": 12,
+          "y": 96,
+          "width": 760,
+          "height": 480,
+          "background": "#0F172A",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "processMode": "in-process",
+            "url": "https://www.baidu.com/"
+          }
+        },
+        {
+          "id": "address",
+          "type": "TextBox",
+          "name": "地址栏",
+          "content": "https://www.baidu.com/",
+          "x": 12,
+          "y": 16,
+          "width": 560,
+          "height": 30,
+          "background": "#0F172A",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {}
+        },
+        {
+          "id": "btn-nav",
+          "type": "Button",
+          "name": "导航按钮",
+          "content": "导航按钮",
+          "x": 580,
+          "y": 16,
+          "width": 90,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_导航按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-back",
+          "type": "Button",
+          "name": "后退按钮",
+          "content": "后退按钮",
+          "x": 12,
+          "y": 56,
+          "width": 90,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_后退按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-forward",
+          "type": "Button",
+          "name": "前进按钮",
+          "content": "前进按钮",
+          "x": 108,
+          "y": 56,
+          "width": 90,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_前进按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-refresh",
+          "type": "Button",
+          "name": "刷新按钮",
+          "content": "刷新按钮",
+          "x": 204,
+          "y": 56,
+          "width": 90,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_刷新按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-open-embedded",
+          "type": "Button",
+          "name": "内嵌打开按钮",
+          "content": "内嵌打开按钮",
+          "x": 300,
+          "y": 56,
+          "width": 130,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_内嵌打开按钮_被单击"
+          }
+        },
+        {
+          "id": "btn-open-native",
+          "type": "Button",
+          "name": "谷歌原生UI按钮",
+          "content": "谷歌原生UI按钮",
+          "x": 436,
+          "y": 56,
+          "width": 150,
+          "height": 34,
+          "background": "#2563EB",
+          "foreground": "#E2E8F0",
+          "isEnabled": true,
+          "visibility": "Visible",
+          "fontSize": 12,
+          "fontFamily": "Microsoft YaHei UI",
+          "fontBold": false,
+          "fontItalic": false,
+          "fontUnderline": false,
+          "properties": {
+            "buttonStyle": "push",
+            "cornerRadius": 6
+          },
+          "events": {
+            "Click": "_谷歌原生UI按钮_被单击"
+          }
+        }
+      ]
+    }
+  ]
+}
