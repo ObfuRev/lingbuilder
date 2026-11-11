@@ -89,9 +89,15 @@ function generateMainCpp(
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
+// windows.h 的 min/max 宏会与模板内的 std::min/std::max 冲突（C2589），必须前置 NOMINMAX。
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 
 #include <windows.h>
 #include <commctrl.h>
+// WIN32_LEAN_AND_MEAN 会裁掉 ole2/objbase 一族，而 gdiplus.h 依赖其中的 COM interface 宏；缺少此头在 MSVC 下报 C4430/C2059 连锁。
+#include <objbase.h>
 #include <gdiplus.h>
 #include <algorithm>
 #include <string>
@@ -138,6 +144,15 @@ static bool DrawAntiAliasedRoundedRectangle(HDC hdc, const RECT& rect, int radiu
     return true;
 }
 
+struct MouseEventSpec {
+    const wchar_t* handler;
+    const wchar_t* message;
+    const wchar_t* title;
+    UINT flags;
+    const wchar_t* debug;
+    bool closeOnConfirm;
+};
+
 struct ControlSpec {
     int id;
     const wchar_t* type;
@@ -164,6 +179,9 @@ struct ControlSpec {
     UINT handlerFlags;
     const wchar_t* handlerDebug;
     bool closeWindowOnConfirm;
+    MouseEventSpec mouseDown;
+    MouseEventSpec mouseMove;
+    MouseEventSpec mouseUp;
 };
 
 struct WindowSpec {
@@ -486,33 +504,33 @@ static HFONT CreateControlFont(const wchar_t* family, int cssPx, bool bold, bool
     );
 }
 
-static void ShowGeneratedEvent(HWND hwnd, const ControlSpec& control) {
-    if (control.handler == nullptr || control.handler[0] == 0) {
+static void RunEventHandlerRule(HWND hwnd, const wchar_t* handler, const wchar_t* handlerMessage, const wchar_t* handlerTitle, UINT handlerFlags, const wchar_t* handlerDebug, bool closeWindowOnConfirm, const wchar_t* controlText) {
+    if (handler == nullptr || handler[0] == 0) {
         return;
     }
 
-    bool hasDebug = (control.handlerDebug != nullptr && control.handlerDebug[0] != 0);
+    bool hasDebug = (handlerDebug != nullptr && handlerDebug[0] != 0);
     if (hasDebug) {
-        OutputDebugStringW(control.handlerDebug);
+        OutputDebugStringW(handlerDebug);
         OutputDebugStringW(L"\\n");
-        
-        int size_needed = WideCharToMultiByte(CP_UTF8, 0, control.handlerDebug, -1, NULL, 0, NULL, NULL);
+
+        int size_needed = WideCharToMultiByte(CP_UTF8, 0, handlerDebug, -1, NULL, 0, NULL, NULL);
         if (size_needed > 0) {
             std::vector<char> utf8_str(size_needed);
-            WideCharToMultiByte(CP_UTF8, 0, control.handlerDebug, -1, &utf8_str[0], size_needed, NULL, NULL);
+            WideCharToMultiByte(CP_UTF8, 0, handlerDebug, -1, &utf8_str[0], size_needed, NULL, NULL);
             std::printf("[调试输出] %s\\n", &utf8_str[0]);
             std::fflush(stdout);
         }
     }
 
-    if (control.handlerMessage != nullptr && control.handlerMessage[0] != 0) {
+    if (handlerMessage != nullptr && handlerMessage[0] != 0) {
         int result = MessageBoxW(
             hwnd,
-            control.handlerMessage,
-            (control.handlerTitle != nullptr && control.handlerTitle[0] != 0) ? control.handlerTitle : L"LingBuilder 运行时事件",
-            control.handlerFlags
+            handlerMessage,
+            (handlerTitle != nullptr && handlerTitle[0] != 0) ? handlerTitle : L"LingBuilder 运行时事件",
+            handlerFlags
         );
-        if (control.closeWindowOnConfirm && result == IDYES) {
+        if (closeWindowOnConfirm && result == IDYES) {
             DestroyWindow(hwnd);
         }
         return;
@@ -523,10 +541,66 @@ static void ShowGeneratedEvent(HWND hwnd, const ControlSpec& control) {
     }
 
     std::wstring message = L"已触发中文事件处理器：";
-    message += control.handler;
+    message += handler;
     message += L"\\n\\n控件：";
-    message += control.text;
+    message += controlText;
     MessageBoxW(hwnd, message.c_str(), L"LingBuilder 运行时事件", MB_OK | MB_ICONINFORMATION);
+}
+
+static void ShowGeneratedEvent(HWND hwnd, const ControlSpec& control) {
+    RunEventHandlerRule(hwnd, control.handler, control.handlerMessage, control.handlerTitle, control.handlerFlags, control.handlerDebug, control.closeWindowOnConfirm, control.text);
+}
+
+static bool HasMouseEventHandler(const MouseEventSpec& spec) {
+    return spec.handler != nullptr && spec.handler[0] != 0;
+}
+
+static bool HasAnyMouseEventHandler(const ControlSpec& control) {
+    return HasMouseEventHandler(control.mouseDown) || HasMouseEventHandler(control.mouseMove) || HasMouseEventHandler(control.mouseUp);
+}
+
+static void DispatchMouseEvent(HWND hwnd, const MouseEventSpec& spec, const wchar_t* controlText) {
+    if (!HasMouseEventHandler(spec)) {
+        return;
+    }
+    RunEventHandlerRule(hwnd, spec.handler, spec.message, spec.title, spec.flags, spec.debug, spec.closeOnConfirm, controlText);
+}
+
+static LRESULT CALLBACK GeneratedControlSubclassProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR /*referenceData*/) {
+    // 控件在本模板里都是窗口的直接子级，GetParent 即设计器窗口。
+    HWND parent = GetParent(hwnd);
+    WindowState* state = parent ? GetState(parent) : nullptr;
+    const ControlSpec* control = (state && state->spec) ? FindControl(*state->spec, static_cast<int>(subclassId)) : nullptr;
+    if (state && state->spec && control) {
+        if (message == WM_MOUSEMOVE) {
+            DispatchMouseEvent(hwnd, control->mouseMove, control->text);
+        } else if (message == WM_LBUTTONDOWN) {
+            // BUTTON 族先把消息交给原生过程推进按压状态机（保住 BN_CLICKED 的产生），
+            // 处理器里可能销毁窗口，转发后先确认控件仍然有效再派发 MouseDown。
+            if (IsType(*control, L"Button") || IsType(*control, L"CheckBox") || IsType(*control, L"RadioButton")) {
+                LRESULT result = DefSubclassProc(hwnd, message, wParam, lParam);
+                if (IsWindow(hwnd)) DispatchMouseEvent(hwnd, control->mouseDown, control->text);
+                return result;
+            }
+            // 拖动手势（按下-移动-抬起）需要鼠标移出控件后仍持续收到消息：
+            // 仅对绑定了任一鼠标事件的非 BUTTON 控件设置捕获，避免改变未绑定控件的既有行为。
+            if (GetCapture() != hwnd && HasAnyMouseEventHandler(*control)) {
+                SetCapture(hwnd);
+            }
+            DispatchMouseEvent(hwnd, control->mouseDown, control->text);
+        } else if (message == WM_LBUTTONUP) {
+            // 原生控件的按压状态机靠自己的 WM_LBUTTONUP 收尾：转发前抢先 ReleaseCapture 会先送出
+            // WM_CAPTURECHANGED，控件把这次按压当成「捕获被抢」取消，丢掉 BN_CLICKED 或定时器收尾。
+            // 统一口径：先转发原生、再清理我方捕获、最后派发 MouseUp（与 IDE 运行链同构）。
+            LRESULT result = DefSubclassProc(hwnd, message, wParam, lParam);
+            if (GetCapture() == hwnd) ReleaseCapture();
+            if (IsWindow(hwnd)) DispatchMouseEvent(hwnd, control->mouseUp, control->text);
+            return result;
+        } else if (message == WM_NCDESTROY) {
+            RemoveWindowSubclass(hwnd, GeneratedControlSubclassProc, subclassId);
+        }
+    }
+    return DefSubclassProc(hwnd, message, wParam, lParam);
 }
 
 static void ShowGeneratedEvent_OLD_UNUSED(HWND hwnd, const ControlSpec& control) {
@@ -631,6 +705,12 @@ static HWND CreateGeneratedControl(HWND hwnd, WindowState& state, const ControlS
     } else if (IsType(control, L"ComboBox")) {
         SendMessageW(child, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(control.text));
         SendMessageW(child, CB_SETCURSEL, 0, 0);
+    }
+
+    // 绑定了任一鼠标事件（MouseDown/MouseMove/MouseUp）的控件挂子类化派发；
+    // 未绑定鼠标事件的控件零子类化，保持既有消息路径不变。
+    if (HasAnyMouseEventHandler(control)) {
+        SetWindowSubclass(child, GeneratedControlSubclassProc, static_cast<UINT_PTR>(control.id), 0);
     }
 
     return child;
@@ -1201,6 +1281,17 @@ function generateWindowSpec(window: LingWindowModel, windowIndex: number): strin
   return `    { ${windowIndex}, L"${escapeWideString(window.title)}", ${Math.max(360, window.width)}, ${Math.max(220, window.height - captionHeight)}, ${toColorRef(window.background)}, L"${escapeWideString(iconStyle)}", L"${escapeWideString(iconPath)}", g_controls_${windowIndex}, ${visibleCount}, L"${escapeWideString(menuItemsStr)}", ${toColorRef(window.menuBackground || '#ffffff')}, ${toColorRef(window.menuForeground || '#000000')}, L"${escapeWideString(menuFont.family)}", ${menuFont.size}, ${menuFont.bold}, ${menuFont.italic}, ${menuFont.underline}, ${deriveLingWindowBorderStyle(borderStyle)}, ${window.maximizable !== false}, ${borderStyleCxx}, ${window.borderlessDraggable === true} }`;
 }
 
+function generateMouseEventSpecInitializer(control: LingControl, eventName: 'MouseDown' | 'MouseMove' | 'MouseUp', eventRules: EplRuntimeEventRuleMap): string {
+  const handler = (control.events?.[eventName] || '').trim();
+  if (!handler) return '{ nullptr, nullptr, nullptr, MB_OK, nullptr, false }';
+  const eventRule = getEplRuntimeEventRule(eventRules, handler);
+  const messageBox = eventRule?.messageBox;
+  const debugText = eventRule?.debugOutputs.join('\n') || '';
+  // 空规则字段统一序列化为 nullptr（与无绑定的占位形态一致；RunEventHandlerRule 对 nullptr 与 L"" 判空等价）。
+  const wideOrNull = (value: string) => (value ? `L"${escapeWideString(value)}"` : 'nullptr');
+  return `{ L"${escapeWideString(handler)}", ${wideOrNull(messageBox?.text || '')}, ${wideOrNull(messageBox?.title || '')}, ${messageBox?.cppFlagsExpression || 'MB_OK'}, ${wideOrNull(debugText)}, ${eventRule?.closesWindowOnConfirm ? 'true' : 'false'} }`;
+}
+
 function generateControlSpec(control: LingControl, id: number, eventRules: EplRuntimeEventRuleMap): string {
   const handler = Object.values(control.events || {}).find(value => value.trim()) || '';
   const eventRule = handler ? getEplRuntimeEventRule(eventRules, handler) : undefined;
@@ -1212,7 +1303,10 @@ function generateControlSpec(control: LingControl, id: number, eventRules: EplRu
   const font = normalizeControlFont(control);
   const selectedColor = controlColorProperty(control, 'selectedColor', '#0E7490');
   const selectedMarkColor = controlColorProperty(control, 'selectedMarkColor', '#FFFFFF');
-  return `    { ${id}, L"${control.type}", L"${escapeWideString(control.content)}", ${int(control.x)}, ${int(control.y)}, ${int(control.width)}, ${int(control.height)}, ${font.size}, L"${escapeWideString(font.family)}", ${font.bold ? 'true' : 'false'}, ${font.italic ? 'true' : 'false'}, ${font.underline ? 'true' : 'false'}, ${cornerRadius}, ${toColorRef(background)}, ${toColorRef(control.foreground)}, ${toColorRef(selectedColor)}, ${toColorRef(selectedMarkColor)}, ${control.isEnabled ? 'true' : 'false'}, ${parseProgress(control)}, L"${escapeWideString(handler)}", L"${escapeWideString(messageBox?.text || '')}", L"${escapeWideString(messageBox?.title || '')}", ${messageBox?.cppFlagsExpression || 'MB_OK'}, L"${escapeWideString(debugText)}", ${eventRule?.closesWindowOnConfirm ? 'true' : 'false'} }`;
+  const mouseDown = generateMouseEventSpecInitializer(control, 'MouseDown', eventRules);
+  const mouseMove = generateMouseEventSpecInitializer(control, 'MouseMove', eventRules);
+  const mouseUp = generateMouseEventSpecInitializer(control, 'MouseUp', eventRules);
+  return `    { ${id}, L"${control.type}", L"${escapeWideString(control.content)}", ${int(control.x)}, ${int(control.y)}, ${int(control.width)}, ${int(control.height)}, ${font.size}, L"${escapeWideString(font.family)}", ${font.bold ? 'true' : 'false'}, ${font.italic ? 'true' : 'false'}, ${font.underline ? 'true' : 'false'}, ${cornerRadius}, ${toColorRef(background)}, ${toColorRef(control.foreground)}, ${toColorRef(selectedColor)}, ${toColorRef(selectedMarkColor)}, ${control.isEnabled ? 'true' : 'false'}, ${parseProgress(control)}, L"${escapeWideString(handler)}", L"${escapeWideString(messageBox?.text || '')}", L"${escapeWideString(messageBox?.title || '')}", ${messageBox?.cppFlagsExpression || 'MB_OK'}, L"${escapeWideString(debugText)}", ${eventRule?.closesWindowOnConfirm ? 'true' : 'false'}, ${mouseDown}, ${mouseMove}, ${mouseUp} }`;
 }
 
 function clampInteger(value: unknown, fallback: number, minimum: number, maximum: number): number {

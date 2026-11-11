@@ -4347,10 +4347,16 @@ test('内嵌站点在 FBro 生成创建后注册流程并阻断独立进程模�
   assert.match(cpp, /FBro_内嵌站点_注册规则\(static_cast<long long>\(reinterpret_cast<uintptr_t>\(instance->handle\)\)\)/u);
 
   const processMode = generateLingCppNativeWin32Project(
-    { schemaVersion: 2, id: 'site-fbro2', name: '内嵌站点FBro独立进程', windows: [makeWindow({ processMode: '独立进程嵌入' })] },
+    { schemaVersion: 2, id: 'site-fbro2', name: '内嵌站点FBro独立进程', windows: [makeWindow({ processMode: '独立进程嵌入', url: 'http://fbro.local/index.html' })] },
     { lingCppSourceCode: source, enabledModules: [fbroModule] }
   );
   assert.ok(processMode.blockingDiagnostics.some(item => item.includes('独立进程') && item.includes('内嵌站点')));
+  // 2304cd4 收窄口径：URL 指向外部地址的独立进程槽位（如 Cloak 指纹浏览器）与内嵌站点无关，不再阻断。
+  const externalSlot = generateLingCppNativeWin32Project(
+    { schemaVersion: 2, id: 'site-fbro3', name: '内嵌站点FBro外部槽位', windows: [makeWindow({ processMode: '独立进程嵌入', url: 'https://www.example.com/' })] },
+    { lingCppSourceCode: source, enabledModules: [fbroModule] }
+  );
+  assert.ok(!externalSlot.blockingDiagnostics.some(item => item.includes('独立进程') && item.includes('内嵌站点')));
 });
 
 test('内嵌站点物化写入 resources 且不影响图标语义', async () => {
@@ -5381,7 +5387,8 @@ test('工作区 ListView 全方法示例可直接生成并用于源码包分享'
   assert.ok(project.windows[0].controls.some(control => control.name === '读取单元格按钮'));
   assert.match(source, /_读取单元格按钮_被单击\(\)/u);
   assert.match(source, /列表视图_取单元格\(普通列表, 选中行, 1\)/u);
-  assert.match(cpp, /信息框\(L"第 "\+到文本\(选中行\+1\)\+L" 行、第 2 列的值："\+单元格内容, 64, L"读取单元格"\)/u);
+  // 拼接链按现行生成器口径防御性包 LingCppWideArg（宽字符拼接归一），语义与旧直拼等价。
+  assert.match(cpp, /信息框\(LingCppWideArg\(\(std::wstring\(LingCppWideArg\(L"第 "\)\) \+ LingCppWideArg\(到文本\(选中行\+1\)\)\)\+L" 行、第 2 列的值："\+单元格内容\), 64, L"读取单元格"\)/u);
   assert.ok(project.windows[0].controls.some(control => control.name === '读取选中行按钮'));
   assert.equal(project.windows[0].controls.find(control => control.name === '普通列表')?.properties?.multiple, true);
   assert.match(source, /选中行 = 控件_取选择项\(普通列表\)/u);
@@ -5390,7 +5397,7 @@ test('工作区 ListView 全方法示例可直接生成并用于源码包分享'
   assert.match(cpp, /选中行文本\s*=\s*到文本\(选中行\)/u);
   assert.match(cpp, /选中行数文本\s*=\s*到文本\(选中行数\)/u);
   assert.match(cpp, /首个选中行文本\s*=\s*到文本\(首个选中行\)/u);
-  assert.match(cpp, /信息框\(L"控件_取选择项："\+选中行文本/u);
+  assert.match(cpp, /信息框\(LingCppWideArg\(L"控件_取选择项："\+选中行文本/u);
   assert.match(cpp, /int 信息框\(const std::wstring& text, UINT flags, const std::wstring& title\)/u);
   assert.match(cpp, /int 信息框\(const std::wstring& text, UINT flags, const wchar_t\* title\)/u);
   for (const advanced of LIST_VIEW_ADVANCED_API) assert.ok(source.includes(`${advanced.name}(`), `示例源码缺少 ${advanced.name}`);
@@ -5868,7 +5875,8 @@ test('格式化文本完整能力演示项目覆盖四组选项卡并可生成�
   assert.deepEqual(generated.blockingDiagnostics, []);
   assert.match(cpp, /WC_TABCONTROL/u);
   assert.match(cpp, /template <typename\.\.\. Args> LingCppTextValue 格式化文本/u);
-  assert.match(cpp, /信息框\(格式化文本\(L"当前订单摘要/u);
+  // 信息框首参是通用型：嵌套 格式化文本(...) 表达式按现行生成器口径包 LingCppWideArg（匹配 wstring 重载）。
+  assert.match(cpp, /信息框\(LingCppWideArg\(格式化文本\(L"当前订单摘要/u);
   assert.match(cpp, /调试输出\(格式化文本\(L"\[格式化日志\]/u);
 });
 
@@ -6055,6 +6063,58 @@ test('精简设计器模型缺少控件颜色字段时也能生成（手写/AI �
   assert.match(cpp, /L"状态标签"/u);
   // 背景缺省回落到窗口背景，前景缺省回落黑色 —— 不再抛异常。
   assert.match(cpp, /RGB\(32, 32, 40\), false, RGB\(0, 0, 0\)/u);
+});
+
+test('native 导出模板：绑定了鼠标事件的控件子类化派发 MouseDown/MouseMove/MouseUp', () => {
+  // 回归（FUTURE_OPTIMIZATIONS 待办收口）：nativeWin32Project 导出链此前无控件子类化，
+  // MouseDown/MouseMove/MouseUp 绑定导出 VS 工程后静默失效（Click 族走 WM_COMMAND 不受影响）。
+  const project: LingWindowProject = {
+    schemaVersion: 2,
+    id: 'native-mouse-events',
+    name: '鼠标事件导出测试',
+    windows: [{
+      id: 'main', fileName: 'MainWindow.xml', className: '主窗口', title: '主窗口', width: 640, height: 480,
+      background: '#202028', description: '',
+      controls: [
+        { ...createControl('pad', undefined, 'Label'), name: '画板', content: '拖动区', events: { MouseDown: '_画板_鼠标按下', MouseMove: '_画板_鼠标移动', MouseUp: '_画板_鼠标抬起' } },
+        { ...createControl('ok', undefined, 'Button'), name: '确定', content: '确定' }
+      ]
+    }]
+  };
+  const eplSourceCode = [
+    '.子程序 _画板_鼠标按下',
+    '    信息框 ("按下", 0, "鼠标事件")',
+    '.子程序 _画板_鼠标移动',
+    '    调试输出 ("移动")',
+    '.子程序 _画板_鼠标抬起',
+    '    信息框 ("抬起", 0, "鼠标事件")'
+  ].join('\n');
+  const result = generateNativeWin32Project(project, { eplSourceCode });
+  const cpp = result.files.find(file => file.relativePath.endsWith('.cpp'))!.content;
+
+  // MouseEventSpec 序列化：三个鼠标处理器名进入 ControlSpec 尾部组，信息框/调试输出规则随组生效（空规则字段 nullptr）。
+  assert.match(cpp, /\{ L"_画板_鼠标按下", L"按下", L"鼠标事件", MB_OK, nullptr, false \}/u);
+  assert.match(cpp, /\{ L"_画板_鼠标移动", nullptr, nullptr, MB_OK, L"移动", false \}/u);
+  assert.match(cpp, /\{ L"_画板_鼠标抬起", L"抬起", L"鼠标事件", MB_OK, nullptr, false \}/u);
+  // 子类化派发存在：挂载点 + 子类过程。
+  assert.match(cpp, /if \(HasAnyMouseEventHandler\(control\)\) \{\s*SetWindowSubclass\(child, GeneratedControlSubclassProc, static_cast<UINT_PTR>\(control\.id\), 0\);/u);
+  assert.match(cpp, /static LRESULT CALLBACK GeneratedControlSubclassProc\(/u);
+  // WM_LBUTTONUP 顺序红线：先转发原生（保按压状态机/BN_CLICKED），再清理我方捕获，最后派发 MouseUp。
+  const subclassStart = cpp.indexOf('GeneratedControlSubclassProc');
+  const upBranch = cpp.slice(cpp.indexOf('} else if (message == WM_LBUTTONUP) {', subclassStart),
+    cpp.indexOf('} else if (message == WM_NCDESTROY) {', subclassStart));
+  assert.ok(upBranch.includes('DefSubclassProc(hwnd, message, wParam, lParam);'), 'WM_LBUTTONUP 必须先转发原生过程');
+  assert.ok(upBranch.indexOf('ReleaseCapture()') > upBranch.indexOf('DefSubclassProc'), '清理捕获必须在转发之后');
+  assert.ok(upBranch.indexOf('control->mouseUp') > upBranch.indexOf('ReleaseCapture'), 'MouseUp 派发必须在清理捕获之后');
+  // 拖动手势：绑定了鼠标事件的非 BUTTON 控件按下时 SetCapture。
+  assert.match(cpp, /if \(GetCapture\(\) != hwnd && HasAnyMouseEventHandler\(\*control\)\) \{\s*SetCapture\(hwnd\);/u);
+  // BUTTON 族 MouseDown 先转发原生（保 BN_CLICKED）再派发。
+  const downBranch = cpp.slice(cpp.indexOf('} else if (message == WM_LBUTTONDOWN) {', subclassStart),
+    cpp.indexOf('} else if (message == WM_LBUTTONUP) {', subclassStart));
+  assert.match(downBranch, /IsType\(\*control, L"Button"\)[\s\S]*?DefSubclassProc/su);
+
+  // 未绑定鼠标事件的控件零子类化：占位 MouseEventSpec 三连空。
+  assert.match(cpp, /\{ nullptr, nullptr, nullptr, MB_OK, nullptr, false \}, \{ nullptr, nullptr, nullptr, MB_OK, nullptr, false \}, \{ nullptr, nullptr, nullptr, MB_OK, nullptr, false \} \}/u);
 });
 
 test('归一化补齐 AI/外部工具生成控件缺失的注册表外观默认值（透明按钮回归）', () => {
