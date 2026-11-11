@@ -3900,6 +3900,9 @@ app.post("/api/window-designer/files", async (req, res) => {
     // 后写入 Map 覆盖 files[] 的同名条目；旧客户端不带排除逻辑也不会再触发
     // 持久层"同一文件不能在一次保存中写入多次"整单拒绝（真机 2026-10-03）。
     const pendingWritesByPath = new Map<string, { relativePath: string; targetPath: string; bytes: Buffer; expectedVersion?: string }>();
+    const designerRelativePath = isWindowDesignerProject
+      ? projectRef.designerPath.replace(/\\/g, "/")
+      : undefined;
     for (const [relativePath, content] of Object.entries(files)) {
       const normalizedPath = relativePath.replace(/\\/g, "/");
       if (!isAllowedProjectTextPath(normalizedPath)) {
@@ -3908,12 +3911,15 @@ app.post("/api/window-designer/files", async (req, res) => {
       if (normalizedPath.split("/").includes("..")) {
         throw new ProjectFileSaveValidationError(`项目文件路径不能越过工作区：${relativePath}`);
       }
-      if (isIdeManagedWorkspacePath(normalizedPath)) {
+      // 注册的 designerPath（典型 `.lingbuilder/window-designer.json` 或 `.lingbuilder/projects/<id>/…`）
+      // 由本端点尾部的设计器权威写入通道处理（files[] 条目只参与同目标去重），不得被 IDE 管理目录
+      // 守卫拦下——该守卫针对的是把普通项目文件写进 `.lingbuilder/**` 的越权回写。
+      if (isIdeManagedWorkspacePath(normalizedPath) && normalizedPath !== designerRelativePath) {
         // `.lingbuilder/**`（模块安装/升级快照/工作区配置）、`.lingbuilder-build/**`（构建产物）、
         // `generated/**`（F5 生成 C++ 工程）由 IDE 专有通道管理，绝不走项目文件保存回写。
         throw new ProjectFileSaveValidationError(`项目文件不能写入 IDE 管理目录：${relativePath}`);
       }
-      if (!isPathInsideProjectScope(normalizedPath, projectRef)) {
+      if (normalizedPath !== designerRelativePath && !isPathInsideProjectScope(normalizedPath, projectRef)) {
         throw new ProjectFileSaveValidationError(`项目文件不在当前项目源码或配置目录内：${relativePath}`);
       }
       const targetPath = await workspacePathPolicy.resolveForWrite(normalizedPath);
@@ -3929,9 +3935,6 @@ app.post("/api/window-designer/files", async (req, res) => {
       });
     }
 
-    const designerRelativePath = isWindowDesignerProject
-      ? projectRef.designerPath.replace(/\\/g, "/")
-      : undefined;
     if (project && designerPath && designerRelativePath) pendingWritesByPath.set(designerRelativePath, {
       relativePath: designerRelativePath,
       targetPath: designerPath,
