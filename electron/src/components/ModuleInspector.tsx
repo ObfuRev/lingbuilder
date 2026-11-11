@@ -1,6 +1,7 @@
 ﻿import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { requestWorkbenchAlert, requestWorkbenchConfirm } from '../services/workbench/workbenchConfirmService';
 import { recoverPaidModuleAccess } from '../services/modules/paidModuleAccessRecovery';
+import { installModuleWithPaidAccessRetry } from '../services/modules/paidModuleInstall';
 import QRCode from 'qrcode';
 import {
   AlertTriangle,
@@ -338,16 +339,29 @@ export default function ModuleInspector({ projectId, onAddLog, isDarkMode = true
     setIsLoading(true);
     setStatusText('正在复制模块文件……\n正在写入模块清单……\n正在刷新模块索引……');
     try {
-      const response = await fetch('/api/modules/package/install', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          previewId: installPreview.previewId,
-          projectId,
-          enableForProject: enableAfterInstall
-        })
+      const requestInstall = async () => {
+        const response = await fetch('/api/modules/package/install', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            previewId: installPreview.previewId,
+            projectId,
+            enableForProject: enableAfterInstall
+          })
+        });
+        return await response.json();
+      };
+      const previewModuleId = installPreview.manifest?.id || '';
+      // 402 不等于「没买」：云端已授权（Pro/已购）但本机还没缓存 Permit 时同样会走到这里
+      // （换机、重装、登录后首次安装）。统一由服务层走共享恢复流换发并重试一次原安装请求。
+      const result = await installModuleWithPaidAccessRetry({
+        moduleId: previewModuleId,
+        moduleName: installPreview.manifest?.name || moduleDisplayName(previewModuleId),
+        install: requestInstall,
+        recoverAccess: (moduleId, moduleName) => requestPaidModuleAccess(moduleId, moduleName, '安装'),
+        onBlocked: response => setStatusText(`模块安装被授权门禁拦下：${response.error || '本机缺少该模块的授权'}；正在自动换发授权…`),
+        onRecovered: () => setStatusText('模块授权已就绪，正在重新安装……')
       });
-      const result = await response.json();
       if (!result.ok) throw new Error(result.error || '模块安装失败');
       setInstallPreview(null);
       setPackagePath('');
@@ -367,32 +381,41 @@ export default function ModuleInspector({ projectId, onAddLog, isDarkMode = true
   const isPaidModule = (moduleId: string) =>
     moduleId === 'lingbuilder.new_emoji.ui' || commerceProducts.some(product => product.moduleId === moduleId);
 
-  /** 收费模块启用前的授权门禁：未登录弹登录框（成功即继续），无权益给购买引导；返回 false 表示中止启用。
-   *  登录+换发授权走共享恢复流 recoverPaidModuleAccess（F5 构建链路同源），这里只保留购买引导。 */
-  const ensurePaidModuleAccess = async (module: InstalledModule): Promise<boolean> => {
+  /** 模块显示名：优先云端商品名，其次已安装清单里的中文名。 */
+  const moduleDisplayName = (moduleId: string) =>
+    commerceProducts.find(product => product.moduleId === moduleId)?.name
+    || installedModules.find(item => item.manifest.id === moduleId)?.manifest.name
+    || moduleId;
+
+  /** 收费模块授权门禁的唯一实现：未登录弹登录框（成功即继续），无权益给购买引导；返回 false 表示中止本次操作。
+   *  登录+换发授权走共享恢复流 recoverPaidModuleAccess（F5 构建链路同源），这里只保留购买引导。
+   *  actionLabel 只影响文案：同一套门禁服务「启用」「下载」「安装」三个入口。
+   *  背景：云端「账号已授权」（Pro/已购）只代表云端有权益，本机还要有 Permit 才放行安装；
+   *  换机、重装、登录后首次安装都会出现「云端已授权、本机无 Permit」，必须在这里现场换发。 */
+  const requestPaidModuleAccess = async (moduleId: string, moduleName: string, actionLabel = '启用'): Promise<boolean> => {
     if (!window.lingBuilder?.cloudAccount?.authorizeModule) {
       setStatusText('收费模块必须在 LingBuilder 桌面端登录后使用。');
       return false;
     }
-    const outcome = await recoverPaidModuleAccess(module.manifest.id, { moduleName: module.manifest.name });
+    const outcome = await recoverPaidModuleAccess(moduleId, { moduleName });
     if (outcome.cancelled) {
-      setStatusText(`已取消登录，未启用「${module.manifest.name}」。登录后可再次点击启用。`);
+      setStatusText(`已取消登录，未完成${actionLabel}「${moduleName}」。登录后可再次点击${actionLabel}。`);
       return false;
     }
     if (outcome.recovered) {
-      setStatusText(`「${module.manifest.name}」模块授权已就绪。`);
+      setStatusText(`「${moduleName}」模块授权已就绪。`);
       return true;
     }
     const reason = outcome.message || '当前账号没有该模块的有效权益。';
-    const offer = commerceProducts.find(product => product.moduleId === module.manifest.id)?.offers?.[0];
+    const offer = commerceProducts.find(product => product.moduleId === moduleId)?.offers?.[0];
     if (offer) {
       const purchaseConfirmed = await requestWorkbenchConfirm({
         title: '需要模块授权',
-        description: `${reason}\n\n是否立即创建微信支付订单（${offer.name || '标准授权'} ¥${(Number(offer.priceMinor) / 100).toFixed(2)}）？付款完成后回到本页重新点击启用。`,
+        description: `${reason}\n\n是否立即创建微信支付订单（${offer.name || '标准授权'} ¥${(Number(offer.priceMinor) / 100).toFixed(2)}）？付款完成后回到本页重新点击${actionLabel}。`,
         confirmLabel: '去购买',
         cancelLabel: '稍后再说'
       });
-      if (purchaseConfirmed) await purchaseModule(module.manifest.id, 'wechat');
+      if (purchaseConfirmed) await purchaseModule(moduleId, 'wechat');
     } else {
       await requestWorkbenchAlert({
         title: '需要模块授权',
@@ -401,6 +424,10 @@ export default function ModuleInspector({ projectId, onAddLog, isDarkMode = true
     }
     return false;
   };
+
+  /** 本地模块列表的启用门禁。 */
+  const ensurePaidModuleAccess = async (module: InstalledModule): Promise<boolean> =>
+    await requestPaidModuleAccess(module.manifest.id, module.manifest.name);
 
   const toggleProjectModule = async (module: InstalledModule) => {
     const enabled = Boolean(module.isEnabledForProject);
@@ -523,6 +550,9 @@ export default function ModuleInspector({ projectId, onAddLog, isDarkMode = true
     if (!cloudModules?.downloadModule) { setStatusText('请在 LingBuilder 桌面端登录后下载收费模块。'); return; }
     setIsLoading(true);
     try {
+      // 云端「已授权」（Pro/已购）只代表云端有权益：下载后安装仍要求本机有 Permit，
+      // 所以下载前先在共享恢复流里换发一次，避免下载完才在安装步骤被 402 拦下。
+      if (isPaidModule(moduleId) && !await requestPaidModuleAccess(moduleId, moduleDisplayName(moduleId), '下载')) return;
       const result = await cloudModules.downloadModule({ moduleId, arch: 'any' });
       if (!result?.ok || !result.relativePath) throw new Error('云端未返回有效模块包路径。');
       setPackagePath(result.relativePath);

@@ -42,6 +42,17 @@ test('锚内密钥签发的 Permit 同步后允许，退出登录可立即清除
   assert.throws(() => access.assertAccess('lingbuilder.new_emoji.ui'), /./u);
 });
 
+test('本机无 Permit 的中文提示不再武断判定未购买（Pro 会员/已购用户换机同样命中）', () => {
+  const access = new ModuleAccessService([]);
+  const status = access.status('lingbuilder.new_emoji.ui');
+  assert.equal(status.code, 'MODULE_PAYMENT_REQUIRED');
+  // 该状态只说明本机没有可用授权缓存，不能当作「账号没买」的结论：
+  // 模块面板下载/安装入口必须走共享恢复流换发后重试。
+  assert.match(status.reason || '', /本机还没有该模块的可用授权/u);
+  assert.match(status.reason || '', /Pro 会员或已购买用户无需重新购买/u);
+  assert.match(status.reason || '', /自动换发/u);
+});
+
 test('空信任锚时签名合法的 Permit 也拒绝并给出锚诊断', () => {
   const signed = signedPermit();
   const access = new ModuleAccessService([]);

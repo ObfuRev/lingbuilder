@@ -72,7 +72,10 @@ export class ModuleAccessService {
   status(moduleId: string): ModuleAccessStatus {
     if (!this.paidModuleIds.has(moduleId)) return { moduleId, paid: false, allowed: true, source: 'unmetered' };
     const permit = this.permits.get(moduleId);
-    if (!permit) return { moduleId, paid: true, allowed: false, code: 'MODULE_PAYMENT_REQUIRED', reason: '请先登录 LingBuilder 账号并购买该模块（登录后重新构建会自动尝试换发授权），或等待限时免费活动开始。' };
+    // 口径纠正：这条只代表「本机当前没有该模块的可用授权缓存」，不代表账号一定没买。
+    // Pro 会员 / 已购用户换机、重装、登录后首次安装时同样会命中；调用方（模块面板下载/安装）
+    // 必须走 recoverPaidModuleAccess 现场换发后再重试，而不是把「请先购买」直接当结论展示。
+    if (!permit) return { moduleId, paid: true, allowed: false, code: 'MODULE_PAYMENT_REQUIRED', reason: '本机还没有该模块的可用授权：登录 LingBuilder 账号后重试即可自动换发（Pro 会员或已购买用户无需重新购买）；若账号确实没有该模块权益，请在模块面板购买，或等待限时免费活动开始。' };
     try { this.verify(permit); }
     catch (error: any) { return { moduleId, paid: true, allowed: false, code: error?.code || 'MODULE_PERMIT_INVALID', reason: error instanceof Error ? error.message : String(error) }; }
     return { moduleId, paid: true, allowed: true, source: permit.payload.source, expiresAt: permit.payload.expiresAt };

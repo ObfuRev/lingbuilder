@@ -792,7 +792,9 @@ test('模块源目录中的 controlRef 补全、示例和代码片段全部保�
   // 2026-10-24 写回 74→77：新增 OP 后台图色模块 opModules.ts/opModuleCommands.ts/opModuleCommands2.ts（214 命令全部为文本/数值/布尔/字节集/byRef 出参，无 controlRef 字面量；全量字面量扫描 0 违规）。
   // 2026-11-01 写回 77→78：并行会话 2026-10-27 C++ 源码库批次新增 projectCppSourceMaterializeService.ts
   //（当时漏改本计数；MySQL TLS 证书校验批次重新确认全量字面量扫描 0 违规后补写回）。
-  assert.equal(sourceFiles.length, 78, '模块源文件数量变化时必须重新确认 controlRef 源字面量覆盖范围（2026-11-01 补写回 +projectCppSourceMaterializeService）');
+  // 2026-11-05 写回 78→79：新增 paidModuleInstall.ts（收费模块安装命中 402 时换发授权后重试的唯一口径，
+  // 纯服务层，无任何 controlRef 字面量；全量字面量扫描 0 违规）。
+  assert.equal(sourceFiles.length, 79, '模块源文件数量变化时必须重新确认 controlRef 源字面量覆盖范围（2026-11-05 补写回 +paidModuleInstall.ts）');
   assert.deepEqual(violations, []);
 
   const unsafe = 'const command = { insertText: \'控件_设置文本("操作结果", "$2")\' };';
@@ -1578,7 +1580,7 @@ test('数组操作模块对元素类型透明地提供成员数、增删改查�
 test('JSON 数据模块 2.0 提供受管 DOM、Pointer、Patch、Schema 与可导出的确定性运行时', async () => {
   const manifest = STANDARD_LIBRARY_MODULES.find(module => module.id === 'lingbuilder.data.json')!;
   const commandNames = new Set(manifest.contributes?.commands?.map(command => command.name));
-  assert.equal(manifest.version, '2.1.0');
+  assert.equal(manifest.version, '2.0.0');
   assert.deepEqual(manifest.contributes?.types, [{
     name: 'JSON值',
     kind: 'opaque',
@@ -1902,7 +1904,7 @@ test('键盘输入模块分类公开全局、前台与 HWND 后台能力', () =>
 
 test('鼠标输入模块按前台、窗口消息和 UI Automation 三类公开完整能力', () => {
   const manifest = SYSTEM_LIBRARY_MODULES.find(module => module.id === 'lingbuilder.input.mouse')!;
-  assert.equal(manifest.version, '2.1.0');
+  assert.equal(manifest.version, '2.0.0');
   assert.deepEqual(validateModuleManifest(manifest).diagnostics, []);
   assert.deepEqual(manifest.contributes?.commands?.map(command => command.name), MOUSE_COMMAND_NAMES);
   assert.deepEqual(manifest.bindings?.commands?.map(binding => binding.command), MOUSE_COMMAND_NAMES);
@@ -2755,7 +2757,7 @@ test('requireAdministrator 通过导出工程 UAC 节与直编链接参数生效
 test('COM 自动化模块 2.0 提供句柄制创建、免注册、OCX 宿主、事件挂接与接口信息', () => {
   const manifest = PLATFORM_ADVANCED_MODULES.find(item => item.id === 'lingbuilder.advanced.com');
   assert.ok(manifest);
-  assert.equal(manifest.version, '2.1.0');
+  assert.equal(manifest.version, '2.0.0');
   assert.equal(validateModuleManifest(manifest).diagnostics.length, 0, 'COM manifest 应通过校验');
   const commandNames = new Set(manifest.contributes?.commands?.map(command => command.name));
   ['COM_创建对象', 'COM_创建对象免注册', 'COM_创建OCX组件', 'COM_取OCX对象', 'COM_取文本属性', 'COM_取数值属性', 'COM_取逻辑属性', 'COM_取对象属性', 'COM_置文本属性', 'COM_调用方法', 'COM_调用文本方法', 'COM_调用数值方法', 'COM_调用逻辑方法', 'COM_调用对象方法', 'COM_挂接事件', 'COM_映射事件', 'COM_取消挂接事件', 'COM_取事件对象参数', 'COM_启用OCX消息转发', 'COM_移除OCX消息转发', 'COM_取接口信息', 'COM_关闭', 'COM_关闭全部', 'COM_取错误'].forEach(name => {
@@ -6373,7 +6375,7 @@ test('CEF3 module exposes the complete event catalog and generates thread-safe h
   assert.deepEqual(manifest.bindings?.commands?.find(binding => binding.command === 'CEF3_发送触摸事件')?.parameters?.map(parameter => parameter.type),
     ['controlRef', 'int', 'double', 'double', 'double', 'double', 'double', 'double', 'int', 'longLong', 'int']);
   assert.equal(manifest.compatibility?.conflicts?.length || 0, 0);
-  assert.equal(manifest.version, '3.0.0-alpha.5');
+  assert.equal(manifest.version, '3.0.0-alpha.6');
   assert.deepEqual(manifest.targets?.map(target => target.id), ['windows-msvc-x64']);
   assert.ok(manifest.targets?.[0]?.libs?.some(item => item.endsWith('LingBuilderCefBridge.lib')));
   assert.ok(!manifest.targets?.[0]?.libs?.some(item => item.endsWith('libcef.lib')));
@@ -6565,7 +6567,7 @@ test('CEF3 module exposes the complete event catalog and generates thread-safe h
   assert.match(cpp, /LB_CEF3_CommandLineGetSwitches/);
   assert.match(cpp, /LB_CEF3_CommandLinePrependWrapper/);
   assert.match(cpp, /LB_CEF3_CommandLineGetGlobal/);
-  assert.match(cpp, /std::vector<CEF3命令行开关>/);
+  assert.match(cpp, /std::vector<LB_CEF3_CommandLineSwitch>/);
   assert.match(cpp, /LB_CEF3_CommandLineRelease/);
   assert.match(cpp, /LB_CEF3_BufferCreate/);
   assert.match(cpp, /LB_CEF3_BufferClone/);
@@ -7084,8 +7086,10 @@ test('CEF3_导航 在桥接句柄就绪前排队，并在浏览器创建完成�
   // 等桥接层发出「浏览器创建完成」（该事件发出前 state->browser 已写入）再补发。
   assert.match(cpp, /bool bridgeReady = false;/);
   assert.match(cpp, /std::wstring pendingNavigation;/);
-  assert.match(cpp, /if \(!instance->bridgeReady\) \{\s*\n\s*instance->pendingNavigation = address;\s*\n\s*return 1;\s*\n\s*\}/);
-  assert.match(cpp, /if \(TextEquals\(eventName, L"浏览器创建完成"\) && !instance\.bridgeReady\) \{/);
+  // 就绪判定已函数化（CEF3_浏览器对象已就绪，自带补发链路），排队写目标与返回值语义不变。
+  assert.match(cpp, /if \(!CEF3_浏览器对象已就绪\(instance\)\) \{\s*\n\s*instance->pendingNavigation = address;\s*\n\s*return 1;\s*\n\s*\}/);
+  // 补发同样函数化：CEF3_补发排队导航 内部置位 bridgeReady 并消费排队目标，重复调用无害。
+  assert.match(cpp, /if \(TextEquals\(eventName, L"浏览器创建完成"\)\) CEF3_补发排队导航\(instance\);/);
   assert.match(cpp, /LB_CEF3_BrowserLoadUrl\(instance\.bridgeHandle, target\.c_str\(\)\) == LB_CEF3_OK/);
   // 补发必须排在事件派发之前：用户没有绑定「浏览器创建完成」时也要能补发导航。
   const flush = cpp.indexOf('TextEquals(eventName, L"浏览器创建完成")');
@@ -7329,13 +7333,12 @@ test('FBro browser manager synchronizes addresses, verifies extension injection,
   assert.match(projectSource, /浏览器管理器_绑定地址栏\(地址输入\)/u);
   assert.match(projectSource, /空 调整布局\(\)[\s\S]*控件_设置位置大小\(浏览器页面,[\s\S]*窗口高度 - 92 \* 当前DPI \/ 96\)/u);
   assert.match(projectSource, /事件 _MainWindow_大小被改变\(\)\s+调整布局\(\)/u);
-  const sizeBlockStart = win32GeneratorSource.indexOf('        case WM_SIZE:',
-    win32GeneratorSource.indexOf('class LingWindowBase'));
-  const sizeBlock = win32GeneratorSource.slice(
-    sizeBlockStart,
-    win32GeneratorSource.indexOf('        case WM_ACTIVATE:', sizeBlockStart)
-  );
-  assert.ok(sizeBlock.indexOf('DispatchWindowEvent(L"SizeChanged")') < sizeBlock.indexOf('FBro_调整全部大小()'));
+  // 布局系统 family 拼接后，class LingWindowBase 之后第一个 case WM_SIZE 属于 EdgeView 宿主子类过程，
+  // 主 WM_SIZE 分支不再能按「第一个 case」锚定——改为锚定 SizeChanged 派发点，向后验证 FBro 联动调整顺序。
+  const sizeChangedAt = win32GeneratorSource.indexOf('DispatchWindowEvent(L"SizeChanged")');
+  assert.ok(sizeChangedAt >= 0, '生成器必须派发 SizeChanged');
+  const fbroResizeAt = win32GeneratorSource.indexOf('FBro_调整全部大小();', sizeChangedAt);
+  assert.ok(fbroResizeAt > sizeChangedAt, 'WM_SIZE 必须先派发 SizeChanged 再执行 FBro 联动调整');
   assert.match(win32GeneratorSource, /浏览器管理器_处理插件检查定时器\(static_cast<UINT_PTR>\(wParam\)\)/u);
   assert.match(win32GeneratorSource, /LB_NE_BrowserShellExtensionPath\(\)[\s\S]{0,800}assetsRoot/u);
 });
@@ -7744,7 +7747,7 @@ test('FBro native dependency materializer preserves directories and only repairs
     files.push({ path: relative, size: content.length, sha256: crypto.createHash('sha256').update(content).digest('hex') });
   }
   await fs.writeFile(path.join(sdk, 'runtime-manifest.json'), JSON.stringify({
-    schemaVersion: 1, sdkVersion: '135.0.21', architecture: 'x64', bridgeVersion: '2.9.5', files
+    schemaVersion: 1, sdkVersion: '135.0.21', architecture: 'x64', bridgeVersion: '2.9.7', files
   }), 'utf8');
   const manifest = BUILTIN_MODULES.find(item => item.id === 'lingbuilder.fbro.browser');
   assert.ok(manifest);
@@ -7824,7 +7827,7 @@ test('FBro 工作区旧版本 SDK 副本让位给机器级缓存的匹配版本'
   // 机器级缓存已由 SDK 面板装到当前版本（真实事故：多标签浏览器工作区 2.9.3 遮蔽 2.9.4 缓存）。
   await writeFbroVersionFixture(path.join(root, 'ws', '.lingbuilder', 'modules', 'lingbuilder.fbro.sdk', 'sdk'), '2.9.3', 'stale-workspace-bridge');
   const cacheRoot = path.join(root, 'sdk-cache');
-  await writeFbroVersionFixture(path.join(cacheRoot, 'modules', 'lingbuilder.fbro.sdk', 'sdk'), '2.9.5', 'fresh-cache-bridge');
+  await writeFbroVersionFixture(path.join(cacheRoot, 'modules', 'lingbuilder.fbro.sdk', 'sdk'), '2.9.7', 'fresh-cache-bridge');
   const manifest = BUILTIN_MODULES.find(item => item.id === 'lingbuilder.fbro.browser');
   assert.ok(manifest);
   const module: InstalledModule = { manifest, installPath: 'builtin://lingbuilder.fbro.browser', isBuiltin: true, isInstalled: true, diagnostics: [] };
@@ -7869,7 +7872,7 @@ test('FBro 所有候选版本都不匹配时回退旧副本并给出精确版本
       preferredTargetId: 'windows-msvc-x64'
     };
     const plan = await materializeModuleNativeDependencies([module], layout);
-    assert.match(plan.blockingDiagnostics.join('\n'), /需要 135\.0\.21\/Bridge 2\.9\.5\/x64，实际为 135\.0\.21\/Bridge 2\.9\.3\/x64/u);
+    assert.match(plan.blockingDiagnostics.join('\n'), /需要 135\.0\.21\/Bridge 2\.9\.7\/x64，实际为 135\.0\.21\/Bridge 2\.9\.3\/x64/u);
   } finally {
     if (previousFbroSdkRoot === undefined) delete process.env.FBRO_SDK_ROOT;
     else process.env.FBRO_SDK_ROOT = previousFbroSdkRoot;
@@ -7948,11 +7951,11 @@ test('FBro 与 CEF3 仅阻断进程内控件，独立进程共存时隔离两套
       schemaVersion: 1,
       sdkVersion: '135.0.21',
       architecture: 'x64',
-      bridgeVersion: '2.9.5',
+      bridgeVersion: '2.9.7',
       files: fbroFiles
     })),
     writeFixture(path.join(cef3Sdk, 'include', 'cef_app.h'), '#pragma once\n'),
-    writeFixture(path.join(cef3Sdk, 'bridge', 'x64', 'LingBuilderCefBridge.h'), '#pragma once\nint LB_CEF3_ResourceResponseBodyBegin();\n'),
+    writeFixture(path.join(cef3Sdk, 'bridge', 'x64', 'LingBuilderCefBridge.h'), '#pragma once\nint LB_CEF3_ResourceResponseBodyBegin();\nint LB_CEF3_BrowserSetWindowBounds();\nint LB_CEF3_BrowserGetWindowBounds();\nint LB_CEF3_BrowserGetNativeWindowHandle();\n'),
     writeFixture(path.join(cef3Sdk, 'bridge', 'x64', 'LingBuilderCefBridge.lib'), 'cef3-bridge-lib'),
     writeFixture(path.join(cef3Sdk, 'bridge', 'x64', 'LingBuilderCefBridge.dll'), 'cef3-bridge-dll'),
     writeFixture(path.join(cef3Sdk, 'bin', 'x64', 'libcef.dll'), 'cef3-cef-150'),
@@ -8025,7 +8028,7 @@ test('FBro 单独启用时运行时只落 bin 顶层，fbro-host 只承载宿主
       schemaVersion: 1,
       sdkVersion: '135.0.21',
       architecture: 'x64',
-      bridgeVersion: '2.9.5',
+      bridgeVersion: '2.9.7',
       files: fbroFiles
     })),
     // 旧版无条件双写留下的 fbro-host 残留，物化后必须被清掉。

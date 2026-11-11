@@ -447,7 +447,26 @@ async function refreshProCommandRulesMirror(): Promise<void> {
     console.warn(`[pro-access] 远程 Pro 命令规则拉取失败（保留上次缓存）：${error instanceof Error ? error.message : String(error)}`);
   }
 }
-async function readModulePermitCache(): Promise<any[]> { try { if (!safeStorage.isEncryptionAvailable()) return []; const value = JSON.parse(safeStorage.decryptString(await fs.readFile(modulePermitCachePath()))); return Array.isArray(value) ? value : []; } catch { return []; } }
+async function readModulePermitCache(): Promise<any[]> {
+  if (!safeStorage.isEncryptionAvailable()) return [];
+  let encrypted: Buffer;
+  try {
+    encrypted = await fs.readFile(modulePermitCachePath());
+  } catch {
+    // 文件不存在 = 本机从没换发过收费模块授权，属正常空缓存。
+    return [];
+  }
+  try {
+    const value = JSON.parse(safeStorage.decryptString(encrypted));
+    return Array.isArray(value) ? value : [];
+  } catch (error) {
+    // 有缓存但解不开（换 Windows 用户 / 更换机器 / 加密绑定变化）时静默当空，
+    // 会让 Pro 会员与已购用户在安装收费模块时被「请先购买」误导；这里留诊断，
+    // 授权由下载 / 安装 / F5 构建入口按需换发（recoverPaidModuleAccess）。
+    logDiagnostic('warn', 'module-access', `本机模块授权缓存无法解密，已按空缓存处理并在需要时重新换发：${error instanceof Error ? error.message : String(error)}`);
+    return [];
+  }
+}
 async function writeModulePermitCache(values: any[]): Promise<void> { if (!safeStorage.isEncryptionAvailable()) return; const file = modulePermitCachePath(); await fs.mkdir(path.dirname(file), { recursive: true }); const temporary = `${file}.${crypto.randomUUID()}.tmp`; await fs.writeFile(temporary, safeStorage.encryptString(JSON.stringify(values.slice(-32)))); await fs.rename(temporary, file); }
 function cloudApiOrigin(): string {
   const explicit = process.env.LINGBUILDER_CLOUD_API_URL?.trim();
@@ -2019,20 +2038,32 @@ app.whenReady().then(async () => {
   const cloudSession = await cloudAccountService.snapshot();
   writeProAccessStateMirror(cloudSession.authenticated ? cloudSession.pro : { active: false });
   void refreshProCommandRulesMirror();
-  const permitRestoreResult = await restoreModulePermits({
+  const runPermitRestore = async () => await restoreModulePermits({
     readCache: readModulePermitCache,
     writeCache: writeModulePermitCache,
     requestRendererApi,
-    refreshAuthorization: cloudSession.authenticated
+    // 换发通道按调用时的登录态判定：补同步时可能刚好完成登录。
+    refreshAuthorization: (await cloudAccountService.snapshot()).authenticated
       ? moduleId => cloudAccountService.modulePermit(moduleId)
       : undefined,
     log: (level, message) => level === 'warn'
       ? console.warn(`[module-access] ${message}`)
       : console.info(`[module-access] ${message}`)
   });
+  const permitRestoreResult = await runPermitRestore();
   // 过期且本次未能换发的 Permit：主进程日志留档；用户可见的显性化由渲染层启动检查
   // （GET /api/module-access/status → 输出面板【模块授权】提示）与 F5/生成的共享授权恢复流承担。
   for (const notice of permitRestoreResult.staleNotices) console.warn(`[module-access] ${notice}`);
+  if (!permitRestoreResult.rendererReady) {
+    // 冷启动时本地服务（utilityProcess）可能超过恢复流的等待窗：一旦放弃，整场会话的内存里
+    // 都没有 Permit，收费模块安装/启用会被误判成「未购买」。这里幂等补同步一次，
+    // 仍失败则交给各入口的按需换发（下载/安装/启用/构建/MCP 门禁）。
+    setTimeout(() => {
+      void runPermitRestore()
+        .then(result => console.info(`[module-access] 模块授权补同步完成：缓存 ${result.cachedCount} 个，同步 ${result.synchronizedCount} 个，换发 ${result.refreshedCount} 个。`))
+        .catch(error => console.warn(`[module-access] 模块授权补同步失败：${error instanceof Error ? error.message : String(error)}`));
+    }, 20_000).unref?.();
+  }
   // 收费模块 Permit 运行期自动续期：长驻会话中 Permit 过期不再依赖重启/F5。
   // 30 分钟巡检临期（<12h）或已过期的缓存 Permit，换发出口与启动恢复流同为 cloudAccountService.modulePermit。
   modulePermitMaintenance = new ModulePermitMaintenanceService({

@@ -38,8 +38,13 @@ test('启用收费模块未登录时弹出全局登录框并在登录后自动�
   // 门禁收敛为共享恢复流：ensurePaidModuleAccess 调 recoverPaidModuleAccess（唯一出口），
   // 未登录由共享流弹全局登录框，登录后自动 authorizeModule 换发授权并继续。
   assert.match(inspector, /const ensurePaidModuleAccess = async \(module: InstalledModule\)/u);
-  assert.match(inspector, /await recoverPaidModuleAccess\(module\.manifest\.id/u);
-  assert.match(inspector, /已取消登录，未启用/u);
+  assert.match(inspector, /const requestPaidModuleAccess = async \(moduleId: string/u);
+  assert.match(inspector, /await recoverPaidModuleAccess\(moduleId, \{ moduleName \}\)/u);
+  assert.match(inspector, /已取消登录，未完成/u);
+  // 云端「重新下载安装」与「安装预览」不得绕过授权门禁：下载前先换发，安装命中 402 时自动换发并重试一次。
+  assert.match(inspector, /if \(isPaidModule\(moduleId\) && !await requestPaidModuleAccess\(moduleId, moduleDisplayName\(moduleId\), '下载'\)\) return;/u);
+  assert.match(inspector, /await installModuleWithPaidAccessRetry\(\{/u);
+  assert.match(inspector, /recoverAccess: \(moduleId, moduleName\) => requestPaidModuleAccess\(moduleId, moduleName, '安装'\)/u);
   assert.match(recovery, /const session = await bridge\.session\(\)\.catch\(\(\) => null\)/u);
   assert.match(recovery, /const login = await requestCloudAccountLogin/u);
   assert.match(recovery, /const authorization = await bridge\.authorizeModule\(moduleId\)\.catch\(\(\) => null\)/u);
